@@ -19,15 +19,9 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       appBar: const DashboardAppBar(),
       
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 850),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: ResponsiveDashboardGrid(items: menuItems),
-          ),
-        ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ResponsiveDashboardGrid(items: menuItems),
       ),
       
       bottomNavigationBar: const DashboardBottomBar(),
