@@ -1,3 +1,11 @@
+# 1.0.0 (2026-07-30)
+
+
+### Features
+
+* **core:** inicializa configuracoes base e temas do PDV ([#2](https://github.com/Dev-DeividCosta/sistema-pdv/issues/2)) ([7f37302](https://github.com/Dev-DeividCosta/sistema-pdv/commit/7f373020cffa130d6fee28448a368d59908810eb))
+* **home:** implementa dashboard e sincroniza dependencias ([#4](https://github.com/Dev-DeividCosta/sistema-pdv/issues/4)) ([4feac42](https://github.com/Dev-DeividCosta/sistema-pdv/commit/4feac42669960404724e84ea8810d1624b396f29))
+
 # 1.0.0 (2026-07-27)
 
 
