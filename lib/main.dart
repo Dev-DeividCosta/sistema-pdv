@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'features/home/presentation/builders/dashboard_menu_builder.dart'; 
-import 'features/home/presentation/pages/dashboard_screen.dart'; 
+import 'package:sistema_pdv/features/home/presentation/builders/dashboard_menu_builder.dart';
+import 'package:sistema_pdv/features/home/presentation/pages/dashboard_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
