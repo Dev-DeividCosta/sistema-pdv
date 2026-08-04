@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../builders/dashboard_menu_builder.dart';
 import '../widgets/dashboard_app_bar.dart';
 import '../widgets/dashboard_bottom_bar.dart';
-import '../widgets/responsive_dashboard_grid.dart';
+
+import '../../../../core/widgets/responsive_menu_grid.dart';
 
 class DashboardScreen extends StatelessWidget {
   final DashboardBuilder builder;
@@ -21,7 +22,7 @@ class DashboardScreen extends StatelessWidget {
       
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ResponsiveDashboardGrid(items: menuItems),
+        child: ResponsiveMenuGrid(items: menuItems), 
       ),
       
       bottomNavigationBar: const DashboardBottomBar(),
