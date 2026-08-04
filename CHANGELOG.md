@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.0.0...v1.1.0) (2026-08-04)
+
+
+### Features
+
+* **customer:** Novo menu responsivo de clientes ([#8](https://github.com/Dev-DeividCosta/sistema-pdv/issues/8)) ([7a7105d](https://github.com/Dev-DeividCosta/sistema-pdv/commit/7a7105d16becdc26b628cd94755fccf88126c66b))
+
 # 1.0.0 (2026-07-30)
 
 
