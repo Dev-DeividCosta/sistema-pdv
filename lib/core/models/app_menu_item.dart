@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class DashboardMenuItem {
+class AppMenuItem {
   final String title;
   final IconData icon;
   final Color color;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
 
-  const DashboardMenuItem({
+  const AppMenuItem({
     required this.title,
     required this.icon,
     required this.color,
-    this.onTap,
+    required this.onTap,
   });
 }
