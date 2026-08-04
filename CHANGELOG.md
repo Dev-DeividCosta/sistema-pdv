@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.1.0...v1.2.0) (2026-08-04)
+
+
+### Features
+
+* **customer:** Módulo de clientes e tela de cadastro ([#10](https://github.com/Dev-DeividCosta/sistema-pdv/issues/10)) ([41ce0b6](https://github.com/Dev-DeividCosta/sistema-pdv/commit/41ce0b646b2b6a807b6bb17269fb1f486abf92a8))
+
 # [1.1.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.0.0...v1.1.0) (2026-08-04)
 
 
