@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart'; 
-import '../../../customer/presentation/pages/clientes_screen.dart';
+import '../../../customer/presentation/pages/customer_screen.dart';
 
 abstract class DashboardBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context); 
@@ -18,7 +18,7 @@ class DashboardBuilderImpl implements DashboardBuilder {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const ClientesScreen(),
+              builder: (context) => const CustomerScreen(),
             ),
           );
         },
