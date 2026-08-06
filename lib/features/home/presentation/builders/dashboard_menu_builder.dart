@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart'; 
 import '../../../customer/presentation/pages/customer_screen.dart';
+import '../../../itinerary/presentation/pages/itinerary_cities_page.dart';
 
 abstract class DashboardBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context); 
@@ -19,6 +20,20 @@ class DashboardBuilderImpl implements DashboardBuilder {
             context,
             MaterialPageRoute(
               builder: (context) => const CustomerScreen(),
+            ),
+          );
+        },
+      ),
+      AppMenuItem(
+        icon: Icons.route, // ou Icons.map_outlined
+        title: 'Roteiro de Viagem',
+        color: const Color(0xFF00ACC1),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              // Correção: Chamando a classe exata e sem parâmetros
+              builder: (context) => const ItineraryCitiesPage(), 
             ),
           );
         },
