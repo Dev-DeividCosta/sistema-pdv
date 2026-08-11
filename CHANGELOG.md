@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.2.0...v1.3.0) (2026-08-11)
+
+
+### Features
+
+* **itinerary:** Módulo de planejamento de roteiros ([#12](https://github.com/Dev-DeividCosta/sistema-pdv/issues/12)) ([8621fa4](https://github.com/Dev-DeividCosta/sistema-pdv/commit/8621fa4ee91dc8bdefdba3cf4a09efb17ddd6e83))
+
 # [1.2.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.1.0...v1.2.0) (2026-08-04)
 
 
