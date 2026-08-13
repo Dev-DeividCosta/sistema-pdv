@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.3.0...v1.4.0) (2026-08-13)
+
+
+### Features
+
+* **customer:** Camada de dados e integração com banco local ([#14](https://github.com/Dev-DeividCosta/sistema-pdv/issues/14)) ([4982501](https://github.com/Dev-DeividCosta/sistema-pdv/commit/498250170b5567344a6fc042b86cff17c5a0fc30))
+
 # [1.3.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.2.0...v1.3.0) (2026-08-11)
 
 
