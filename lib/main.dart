@@ -1,14 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:powersync/powersync.dart';
+
+import 'package:sistema_pdv/app/database/app_database.dart';
+import 'package:sistema_pdv/app/database/powersync_schema.dart';
+import 'package:sistema_pdv/features/customer/presentation/providers/customer_form_provider.dart';
 import 'package:sistema_pdv/features/home/presentation/builders/dashboard_menu_builder.dart';
 import 'package:sistema_pdv/features/home/presentation/pages/dashboard_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 1. Inicializa a engine do PowerSync localmente com o Schema
+  final powerSyncDb = PowerSyncDatabase(
+    schema: schema,
+    path: 'sistema_pdv.sqlite',
+  );
+  await powerSyncDb.initialize();
+
+  // 2. Cria a instância do Drift Database a partir da conexão PowerSync
+  final bancoDeDados = createDatabase(powerSyncDb);
+
+  // 3. Trava a orientação da tela e injeta o banco de dados via Riverpod
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {
-    runApp(const MeuPDVApp());
+    runApp(
+      ProviderScope(
+        overrides: [
+          appDatabaseProvider.overrideWithValue(bancoDeDados),
+        ],
+        child: const MeuPDVApp(),
+      ),
+    );
   });
 }
 
@@ -19,15 +44,13 @@ class MeuPDVApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Meu PDV',
-      debugShowCheckedModeBanner: false, 
+      debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
-      
       theme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
         colorSchemeSeed: Colors.teal,
       ),
-      
       darkTheme: ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
@@ -37,7 +60,7 @@ class MeuPDVApp extends StatelessWidget {
           backgroundColor: Color(0xFF18202C),
           elevation: 2,
           centerTitle: true,
-          foregroundColor: Colors.white, 
+          foregroundColor: Colors.white,
         ),
         bottomAppBarTheme: const BottomAppBarThemeData(
           color: Color(0xFF18202C),
@@ -47,10 +70,9 @@ class MeuPDVApp extends StatelessWidget {
           foregroundColor: Colors.white,
         ),
       ),
-      
       home: DashboardScreen(
         builder: DashboardBuilderImpl(),
-      ), 
+      ),
     );
   }
 }
