@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart';
-import '../pages/new_customer_screen.dart';
+import '../pages/new_customer_page.dart';
 
 abstract class CustomerMenuBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context);

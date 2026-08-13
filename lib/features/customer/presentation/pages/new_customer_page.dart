@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/entities/customer.dart';
+import '../providers/customer_form_provider.dart'; 
 
-class NewCustomerScreen extends StatefulWidget {
+class NewCustomerScreen extends ConsumerStatefulWidget {
   const NewCustomerScreen({super.key});
 
   @override
-  State<NewCustomerScreen> createState() => _NewCustomerScreenState();
+  ConsumerState<NewCustomerScreen> createState() => _NewCustomerScreenState();
 }
 
-class _NewCustomerScreenState extends State<NewCustomerScreen> {
+class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isAtivo = true;
@@ -50,18 +53,59 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
 
   void _salvarCliente() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cliente salvo com sucesso!'),
-          backgroundColor: Colors.green,
-        ),
+      // 1. Criamos a entidade através dos controllers
+      final novoCliente = CustomerEntity.createNew(
+        nome: _nomeController.text.trim(),
+        apelido: _apelidoController.text.trim().isEmpty ? null : _apelidoController.text.trim(),
+        rua: _ruaController.text.trim().isEmpty ? null : _ruaController.text.trim(),
+        numero: _numeroController.text.trim().isEmpty ? null : _numeroController.text.trim(),
+        complemento: _complementoController.text.trim().isEmpty ? null : _complementoController.text.trim(),
+        bairro: _bairroController.text.trim().isEmpty ? null : _bairroController.text.trim(),
+        cidade: _cidadeController.text.trim().isEmpty ? null : _cidadeController.text.trim(),
+        uf: _selectedUF,
+        cep: _cepController.text.trim().isEmpty ? null : _cepController.text.trim(),
+        telefoneFixo: _telefoneFixoController.text.trim().isEmpty ? null : _telefoneFixoController.text.trim(),
+        celular: _celularController.text.trim().isEmpty ? null : _celularController.text.trim(),
+        email: _emailController.text.trim().isEmpty ? null : _emailController.text.trim(),
+        observacoes: _observacoesController.text.trim().isEmpty ? null : _observacoesController.text.trim(),
+        isAtivo: _isAtivo,
       );
-      Navigator.pop(context);
+
+      // 2. Disparamos a ação no Notifier do Riverpod
+      ref.read(customerFormProvider.notifier).saveCustomer(novoCliente);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Escuta o estado para disparar Snackbars e fechar a tela em caso de sucesso
+    ref.listen<AsyncValue<void>>(customerFormProvider, (previous, next) {
+      next.when(
+        data: (_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Cliente salvo com sucesso!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context); // Se estiver usando go_router com context.pop(), pode substituir aqui
+        },
+        error: (err, stack) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao salvar cliente: $err'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+        loading: () {}, // O loading altera a UI no build abaixo
+      );
+    });
+
+    // Observa o estado atual para ver se está salvando
+    final formState = ref.watch(customerFormProvider);
+    final isLoading = formState.isLoading;
+
     return Scaffold(
       backgroundColor: const Color(0xFF2C2C2C),
       appBar: AppBar(
@@ -88,7 +132,11 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       children: [
                         _buildSectionHeader(Icons.people, 'Informações do Cliente'),
                         const SizedBox(height: 16),
-                        _buildTextField(controller: _nomeController, label: 'Nome'),
+                        _buildTextField(
+                          controller: _nomeController, 
+                          label: 'Nome',
+                          validator: (value) => value == null || value.isEmpty ? 'O nome é obrigatório' : null,
+                        ),
                         const SizedBox(height: 12),
                         _buildTextField(controller: _apelidoController, label: 'Apelido'),
                         const SizedBox(height: 12),
@@ -181,7 +229,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: isLoading ? null : () => Navigator.pop(context),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             side: const BorderSide(color: Colors.white54),
@@ -195,7 +243,7 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                       const SizedBox(width: 16),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: _salvarCliente,
+                          onPressed: isLoading ? null : _salvarCliente,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFB71C1C),
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -203,7 +251,13 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text('SALVAR', style: TextStyle(color: Colors.white)),
+                          child: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                )
+                              : const Text('SALVAR', style: TextStyle(color: Colors.white)),
                         ),
                       ),
                     ],
@@ -301,11 +355,13 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
     required String label,
     TextInputType? keyboardType,
     int maxLines = 1,
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      validator: validator,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
@@ -319,6 +375,14 @@ class _NewCustomerScreenState extends State<NewCustomerScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Color(0xFFB71C1C)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.redAccent),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.redAccent),
           borderRadius: BorderRadius.circular(8),
         ),
       ),

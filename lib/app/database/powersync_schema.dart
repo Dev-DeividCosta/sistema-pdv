@@ -1,0 +1,22 @@
+import 'package:powersync/powersync.dart';
+
+const schema = Schema([
+  Table('customers', [
+    Column.text('nome'),
+    Column.text('apelido'),
+    Column.text('rua'),
+    Column.text('numero'),
+    Column.text('complemento'),
+    Column.text('bairro'),
+    Column.text('cidade'),
+    Column.text('uf'),
+    Column.text('cep'),
+    Column.text('telefone_fixo'),
+    Column.text('celular'),
+    Column.text('email'),
+    Column.text('observacoes'),
+    Column.integer('is_ativo'),
+    Column.integer('is_deleted'),
+    Column.text('created_at'),
+  ]),
+]);

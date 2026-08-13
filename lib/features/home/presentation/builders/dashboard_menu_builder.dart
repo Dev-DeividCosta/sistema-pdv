@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart'; 
-import '../../../customer/presentation/pages/customer_screen.dart';
+import '../../../customer/presentation/pages/customer_page.dart';
 import '../../../itinerary/presentation/pages/itinerary_cities_page.dart';
 
 abstract class DashboardBuilder {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../data/models/user_data.dart';
 import '../widgets/itinerary_progress_header.dart';
 import '../widgets/itinerary_user_tile.dart';
-import '../../../customer/presentation/pages/new_customer_screen.dart';
+import '../../../customer/presentation/pages/new_customer_page.dart';
 
 class ItineraryPlanningPage extends StatefulWidget {
   final String cityName;
