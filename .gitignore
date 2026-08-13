@@ -44,3 +44,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 node_modules
+
+# Local Databases & Temporary Files
+*.zip
+*.sqlite*
+*.db
