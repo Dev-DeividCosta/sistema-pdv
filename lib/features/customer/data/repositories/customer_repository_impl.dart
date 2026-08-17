@@ -23,6 +23,7 @@ class CustomerRepositoryImpl implements CustomerRepository {
       id: Value(customer.id),
       nome: Value(customer.nome),
       apelido: Value(customer.apelido),
+      cpf: Value(customer.cpf),
       rua: Value(customer.rua),
       numero: Value(customer.numero),
       complemento: Value(customer.complemento),
@@ -35,6 +36,7 @@ class CustomerRepositoryImpl implements CustomerRepository {
       email: Value(customer.email),
       observacoes: Value(customer.observacoes),
       isAtivo: Value(customer.isAtivo),
+      isDeleted: const Value(false),
       createdAt: Value(customer.createdAt),
     );
     await _localDataSource.saveCustomer(companion);

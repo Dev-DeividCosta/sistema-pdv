@@ -4,6 +4,7 @@ class CustomerEntity {
   final String id;
   final String nome;
   final String? apelido;
+  final String? cpf;
   final String? rua;
   final String? numero;
   final String? complemento;
@@ -22,6 +23,7 @@ class CustomerEntity {
     required this.id,
     required this.nome,
     this.apelido,
+    this.cpf,
     this.rua,
     this.numero,
     this.complemento,
@@ -41,6 +43,7 @@ class CustomerEntity {
   factory CustomerEntity.createNew({
     required String nome,
     String? apelido,
+    String? cpf,
     String? rua,
     String? numero,
     String? complemento,
@@ -55,9 +58,10 @@ class CustomerEntity {
     required bool isAtivo,
   }) {
     return CustomerEntity(
-      id: const Uuid().v4(), // Necessário instalar o pacote 'uuid'
+      id: const Uuid().v4(),
       nome: nome,
       apelido: apelido,
+      cpf: cpf,
       rua: rua,
       numero: numero,
       complemento: complemento,
@@ -78,6 +82,7 @@ class CustomerEntity {
     String? id,
     String? nome,
     String? apelido,
+    String? cpf,
     String? rua,
     String? numero,
     String? complemento,
@@ -96,6 +101,7 @@ class CustomerEntity {
       id: id ?? this.id,
       nome: nome ?? this.nome,
       apelido: apelido ?? this.apelido,
+      cpf: cpf ?? this.cpf,
       rua: rua ?? this.rua,
       numero: numero ?? this.numero,
       complemento: complemento ?? this.complemento,

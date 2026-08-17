@@ -7,6 +7,7 @@ extension CustomerModelMapper on db.Customer {
       id: id,
       nome: nome,
       apelido: apelido,
+      cpf: cpf,
       rua: rua,
       numero: numero,
       complemento: complemento,
