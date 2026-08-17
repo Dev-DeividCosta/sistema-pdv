@@ -25,6 +25,11 @@ class $CustomersTable extends Customers
   late final GeneratedColumn<String> apelido = GeneratedColumn<String>(
       'apelido', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _cpfMeta = const VerificationMeta('cpf');
+  @override
+  late final GeneratedColumn<String> cpf = GeneratedColumn<String>(
+      'cpf', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _ruaMeta = const VerificationMeta('rua');
   @override
   late final GeneratedColumn<String> rua = GeneratedColumn<String>(
@@ -117,6 +122,7 @@ class $CustomersTable extends Customers
         id,
         nome,
         apelido,
+        cpf,
         rua,
         numero,
         complemento,
@@ -156,6 +162,10 @@ class $CustomersTable extends Customers
     if (data.containsKey('apelido')) {
       context.handle(_apelidoMeta,
           apelido.isAcceptableOrUnknown(data['apelido']!, _apelidoMeta));
+    }
+    if (data.containsKey('cpf')) {
+      context.handle(
+          _cpfMeta, cpf.isAcceptableOrUnknown(data['cpf']!, _cpfMeta));
     }
     if (data.containsKey('rua')) {
       context.handle(
@@ -233,6 +243,8 @@ class $CustomersTable extends Customers
           .read(DriftSqlType.string, data['${effectivePrefix}nome'])!,
       apelido: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}apelido']),
+      cpf: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}cpf']),
       rua: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}rua']),
       numero: attachedDatabase.typeMapping
@@ -274,6 +286,7 @@ class Customer extends DataClass implements Insertable<Customer> {
   final String id;
   final String nome;
   final String? apelido;
+  final String? cpf;
   final String? rua;
   final String? numero;
   final String? complemento;
@@ -292,6 +305,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       {required this.id,
       required this.nome,
       this.apelido,
+      this.cpf,
       this.rua,
       this.numero,
       this.complemento,
@@ -313,6 +327,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     map['nome'] = Variable<String>(nome);
     if (!nullToAbsent || apelido != null) {
       map['apelido'] = Variable<String>(apelido);
+    }
+    if (!nullToAbsent || cpf != null) {
+      map['cpf'] = Variable<String>(cpf);
     }
     if (!nullToAbsent || rua != null) {
       map['rua'] = Variable<String>(rua);
@@ -360,6 +377,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       apelido: apelido == null && nullToAbsent
           ? const Value.absent()
           : Value(apelido),
+      cpf: cpf == null && nullToAbsent ? const Value.absent() : Value(cpf),
       rua: rua == null && nullToAbsent ? const Value.absent() : Value(rua),
       numero:
           numero == null && nullToAbsent ? const Value.absent() : Value(numero),
@@ -396,6 +414,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       id: serializer.fromJson<String>(json['id']),
       nome: serializer.fromJson<String>(json['nome']),
       apelido: serializer.fromJson<String?>(json['apelido']),
+      cpf: serializer.fromJson<String?>(json['cpf']),
       rua: serializer.fromJson<String?>(json['rua']),
       numero: serializer.fromJson<String?>(json['numero']),
       complemento: serializer.fromJson<String?>(json['complemento']),
@@ -419,6 +438,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       'id': serializer.toJson<String>(id),
       'nome': serializer.toJson<String>(nome),
       'apelido': serializer.toJson<String?>(apelido),
+      'cpf': serializer.toJson<String?>(cpf),
       'rua': serializer.toJson<String?>(rua),
       'numero': serializer.toJson<String?>(numero),
       'complemento': serializer.toJson<String?>(complemento),
@@ -440,6 +460,7 @@ class Customer extends DataClass implements Insertable<Customer> {
           {String? id,
           String? nome,
           Value<String?> apelido = const Value.absent(),
+          Value<String?> cpf = const Value.absent(),
           Value<String?> rua = const Value.absent(),
           Value<String?> numero = const Value.absent(),
           Value<String?> complemento = const Value.absent(),
@@ -458,6 +479,7 @@ class Customer extends DataClass implements Insertable<Customer> {
         id: id ?? this.id,
         nome: nome ?? this.nome,
         apelido: apelido.present ? apelido.value : this.apelido,
+        cpf: cpf.present ? cpf.value : this.cpf,
         rua: rua.present ? rua.value : this.rua,
         numero: numero.present ? numero.value : this.numero,
         complemento: complemento.present ? complemento.value : this.complemento,
@@ -480,6 +502,7 @@ class Customer extends DataClass implements Insertable<Customer> {
           ..write('id: $id, ')
           ..write('nome: $nome, ')
           ..write('apelido: $apelido, ')
+          ..write('cpf: $cpf, ')
           ..write('rua: $rua, ')
           ..write('numero: $numero, ')
           ..write('complemento: $complemento, ')
@@ -503,6 +526,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       id,
       nome,
       apelido,
+      cpf,
       rua,
       numero,
       complemento,
@@ -524,6 +548,7 @@ class Customer extends DataClass implements Insertable<Customer> {
           other.id == this.id &&
           other.nome == this.nome &&
           other.apelido == this.apelido &&
+          other.cpf == this.cpf &&
           other.rua == this.rua &&
           other.numero == this.numero &&
           other.complemento == this.complemento &&
@@ -544,6 +569,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
   final Value<String> id;
   final Value<String> nome;
   final Value<String?> apelido;
+  final Value<String?> cpf;
   final Value<String?> rua;
   final Value<String?> numero;
   final Value<String?> complemento;
@@ -563,6 +589,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     this.id = const Value.absent(),
     this.nome = const Value.absent(),
     this.apelido = const Value.absent(),
+    this.cpf = const Value.absent(),
     this.rua = const Value.absent(),
     this.numero = const Value.absent(),
     this.complemento = const Value.absent(),
@@ -583,6 +610,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     required String id,
     required String nome,
     this.apelido = const Value.absent(),
+    this.cpf = const Value.absent(),
     this.rua = const Value.absent(),
     this.numero = const Value.absent(),
     this.complemento = const Value.absent(),
@@ -604,6 +632,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     Expression<String>? id,
     Expression<String>? nome,
     Expression<String>? apelido,
+    Expression<String>? cpf,
     Expression<String>? rua,
     Expression<String>? numero,
     Expression<String>? complemento,
@@ -624,6 +653,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       if (id != null) 'id': id,
       if (nome != null) 'nome': nome,
       if (apelido != null) 'apelido': apelido,
+      if (cpf != null) 'cpf': cpf,
       if (rua != null) 'rua': rua,
       if (numero != null) 'numero': numero,
       if (complemento != null) 'complemento': complemento,
@@ -646,6 +676,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       {Value<String>? id,
       Value<String>? nome,
       Value<String?>? apelido,
+      Value<String?>? cpf,
       Value<String?>? rua,
       Value<String?>? numero,
       Value<String?>? complemento,
@@ -665,6 +696,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       id: id ?? this.id,
       nome: nome ?? this.nome,
       apelido: apelido ?? this.apelido,
+      cpf: cpf ?? this.cpf,
       rua: rua ?? this.rua,
       numero: numero ?? this.numero,
       complemento: complemento ?? this.complemento,
@@ -694,6 +726,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     }
     if (apelido.present) {
       map['apelido'] = Variable<String>(apelido.value);
+    }
+    if (cpf.present) {
+      map['cpf'] = Variable<String>(cpf.value);
     }
     if (rua.present) {
       map['rua'] = Variable<String>(rua.value);
@@ -749,6 +784,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
           ..write('id: $id, ')
           ..write('nome: $nome, ')
           ..write('apelido: $apelido, ')
+          ..write('cpf: $cpf, ')
           ..write('rua: $rua, ')
           ..write('numero: $numero, ')
           ..write('complemento: $complemento, ')

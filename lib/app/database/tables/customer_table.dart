@@ -4,6 +4,7 @@ class Customers extends Table {
   TextColumn get id => text()();
   TextColumn get nome => text()();
   TextColumn get apelido => text().nullable()();
+  TextColumn get cpf => text().nullable()();
   TextColumn get rua => text().nullable()();
   TextColumn get numero => text().nullable()();
   TextColumn get complemento => text().nullable()();

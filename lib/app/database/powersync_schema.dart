@@ -4,6 +4,7 @@ const schema = Schema([
   Table('customers', [
     Column.text('nome'),
     Column.text('apelido'),
+    Column.text('cpf'),
     Column.text('rua'),
     Column.text('numero'),
     Column.text('complemento'),
