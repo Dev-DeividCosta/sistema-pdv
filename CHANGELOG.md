@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.4.0...v1.5.0) (2026-08-17)
+
+
+### Features
+
+* **customer:** Adição de CPF e Listagem de Clientes ([#16](https://github.com/Dev-DeividCosta/sistema-pdv/issues/16)) ([7f3c7ab](https://github.com/Dev-DeividCosta/sistema-pdv/commit/7f3c7ab8668f776e502d2ce936124d49ac3cfcb1))
+
 # [1.4.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.3.0...v1.4.0) (2026-08-13)
 
 
