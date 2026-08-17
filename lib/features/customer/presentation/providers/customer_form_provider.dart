@@ -25,6 +25,11 @@ final customerRepositoryProvider = Provider<CustomerRepository>((ref) {
   return CustomerRepositoryImpl(dataSource);
 });
 
+final customersStreamProvider = StreamProvider.autoDispose<List<CustomerEntity>>((ref) {
+  final repository = ref.watch(customerRepositoryProvider);
+  return repository.watchCustomers();
+});
+
 // 4. Provider do UseCase
 final saveCustomerUseCaseProvider = Provider<SaveCustomerUseCase>((ref) {
   final repository = ref.watch(customerRepositoryProvider);
@@ -44,6 +49,8 @@ class CustomerFormNotifier extends AutoDisposeAsyncNotifier<void> {
     state = await AsyncValue.guard(() async {
       final useCase = ref.read(saveCustomerUseCaseProvider);
       await useCase(customer);
+
+      ref.invalidate(customersStreamProvider);
     });
   }
 }

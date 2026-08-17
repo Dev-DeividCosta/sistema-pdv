@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/customer.dart';
 import '../providers/customer_form_provider.dart'; 
@@ -18,6 +19,7 @@ class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
 
   final _nomeController = TextEditingController();
   final _apelidoController = TextEditingController();
+  final _cpfController = TextEditingController(); // <-- CONTROLLER DO CPF
   final _ruaController = TextEditingController();
   final _numeroController = TextEditingController();
   final _complementoController = TextEditingController();
@@ -38,6 +40,7 @@ class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
   void dispose() {
     _nomeController.dispose();
     _apelidoController.dispose();
+    _cpfController.dispose(); // <-- DISPOSE DO CPF
     _ruaController.dispose();
     _numeroController.dispose();
     _complementoController.dispose();
@@ -51,12 +54,51 @@ class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
     super.dispose();
   }
 
+  // Validação opcional porém completa do CPF
+  String? _validarCPF(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return null; // Campo é opcional
+    }
+
+    final cleanCpf = value.replaceAll(RegExp(r'\D'), '');
+
+    if (cleanCpf.length != 11) {
+      return 'CPF deve conter 11 dígitos';
+    }
+
+    if (RegExp(r'^(\d)\1*$').hasMatch(cleanCpf)) {
+      return 'CPF inválido';
+    }
+
+    // Algoritmo de validação do CPF (Módulo 11)
+    int sum1 = 0;
+    for (int i = 0; i < 9; i++) {
+      sum1 += int.parse(cleanCpf[i]) * (10 - i);
+    }
+    int digit1 = 11 - (sum1 % 11);
+    if (digit1 >= 10) digit1 = 0;
+
+    int sum2 = 0;
+    for (int i = 0; i < 10; i++) {
+      sum2 += int.parse(cleanCpf[i]) * (11 - i);
+    }
+    int digit2 = 11 - (sum2 % 11);
+    if (digit2 >= 10) digit2 = 0;
+
+    if (int.parse(cleanCpf[9]) != digit1 || int.parse(cleanCpf[10]) != digit2) {
+      return 'CPF inválido';
+    }
+
+    return null;
+  }
+
   void _salvarCliente() {
     if (_formKey.currentState!.validate()) {
       // 1. Criamos a entidade através dos controllers
       final novoCliente = CustomerEntity.createNew(
         nome: _nomeController.text.trim(),
         apelido: _apelidoController.text.trim().isEmpty ? null : _apelidoController.text.trim(),
+        cpf: _cpfController.text.trim().isEmpty ? null : _cpfController.text.trim(), // <-- ENVIANDO O CPF
         rua: _ruaController.text.trim().isEmpty ? null : _ruaController.text.trim(),
         numero: _numeroController.text.trim().isEmpty ? null : _numeroController.text.trim(),
         complemento: _complementoController.text.trim().isEmpty ? null : _complementoController.text.trim(),
@@ -78,7 +120,6 @@ class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Escuta o estado para disparar Snackbars e fechar a tela em caso de sucesso
     ref.listen<AsyncValue<void>>(customerFormProvider, (previous, next) {
       next.when(
         data: (_) {
@@ -88,7 +129,7 @@ class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.pop(context); // Se estiver usando go_router com context.pop(), pode substituir aqui
+          Navigator.pop(context);
         },
         error: (err, stack) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -98,11 +139,10 @@ class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
             ),
           );
         },
-        loading: () {}, // O loading altera a UI no build abaixo
+        loading: () {},
       );
     });
 
-    // Observa o estado atual para ver se está salvando
     final formState = ref.watch(customerFormProvider);
     final isLoading = formState.isLoading;
 
@@ -138,7 +178,31 @@ class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
                           validator: (value) => value == null || value.isEmpty ? 'O nome é obrigatório' : null,
                         ),
                         const SizedBox(height: 12),
-                        _buildTextField(controller: _apelidoController, label: 'Apelido'),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: _buildTextField(
+                                controller: _apelidoController, 
+                                label: 'Apelido',
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              flex: 1,
+                              child: _buildTextField(
+                                controller: _cpfController,
+                                label: 'CPF (Opcional)',
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(11),
+                                ],
+                                validator: _validarCPF,
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 12),
                         Row(
                           children: [
@@ -355,12 +419,14 @@ class _NewCustomerScreenState extends ConsumerState<NewCustomerScreen> {
     required String label,
     TextInputType? keyboardType,
     int maxLines = 1,
+    List<TextInputFormatter>? inputFormatters, // <-- SUPORTE A INPUT FORMATTERS
     String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      inputFormatters: inputFormatters,
       validator: validator,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(

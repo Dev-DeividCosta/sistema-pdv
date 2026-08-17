@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart';
 import '../pages/new_customer_page.dart';
+import '../pages/list_customer_page.dart';
 
 abstract class CustomerMenuBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context);
@@ -29,7 +30,14 @@ class CustomerMenuBuilderImpl implements CustomerMenuBuilder {
         title: 'Listar clientes cadastrados',
         icon: Icons.list_alt,
         color: const Color(0xFFB71C1C),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ListCustomerPage(),
+            ),
+          );
+        },
       ),
       AppMenuItem(
         title: 'Gerar relatório PDF dos clientes',
