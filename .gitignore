@@ -49,3 +49,8 @@ node_modules
 *.zip
 *.sqlite*
 *.db
+
+# Flutter generated plugin registrants
+**/flutter/generated_plugin_registrant.*
+**/flutter/generated_plugins.cmake
+**/Flutter/GeneratedPluginRegistrant.swift
