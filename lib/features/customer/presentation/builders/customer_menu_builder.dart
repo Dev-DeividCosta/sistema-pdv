@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart';
-import '../pages/new_customer_page.dart';
+import '../pages/customer_form_page.dart';
 import '../pages/list_customer_page.dart';
 
 abstract class CustomerMenuBuilder {
@@ -21,7 +21,7 @@ class CustomerMenuBuilderImpl implements CustomerMenuBuilder {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const NewCustomerScreen(),
+              builder: (_) => const CustomerFormPage(mode: CustomerFormMode.create),
             ),
           );
         },

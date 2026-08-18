@@ -1,5 +1,7 @@
 import 'package:uuid/uuid.dart';
 
+const _undefined = Object();
+
 class CustomerEntity {
   final String id;
   final String nome;
@@ -39,7 +41,6 @@ class CustomerEntity {
     required this.createdAt,
   });
 
-  // Construtor factory prático para novos clientes (gera o ID e a data automaticamente)
   factory CustomerEntity.createNew({
     required String nome,
     String? apelido,
@@ -81,38 +82,38 @@ class CustomerEntity {
   CustomerEntity copyWith({
     String? id,
     String? nome,
-    String? apelido,
-    String? cpf,
-    String? rua,
-    String? numero,
-    String? complemento,
-    String? bairro,
-    String? cidade,
-    String? uf,
-    String? cep,
-    String? telefoneFixo,
-    String? celular,
-    String? email,
-    String? observacoes,
+    Object? apelido = _undefined,
+    Object? cpf = _undefined,
+    Object? rua = _undefined,
+    Object? numero = _undefined,
+    Object? complemento = _undefined,
+    Object? bairro = _undefined,
+    Object? cidade = _undefined,
+    Object? uf = _undefined,
+    Object? cep = _undefined,
+    Object? telefoneFixo = _undefined,
+    Object? celular = _undefined,
+    Object? email = _undefined,
+    Object? observacoes = _undefined,
     bool? isAtivo,
     DateTime? createdAt,
   }) {
     return CustomerEntity(
       id: id ?? this.id,
       nome: nome ?? this.nome,
-      apelido: apelido ?? this.apelido,
-      cpf: cpf ?? this.cpf,
-      rua: rua ?? this.rua,
-      numero: numero ?? this.numero,
-      complemento: complemento ?? this.complemento,
-      bairro: bairro ?? this.bairro,
-      cidade: cidade ?? this.cidade,
-      uf: uf ?? this.uf,
-      cep: cep ?? this.cep,
-      telefoneFixo: telefoneFixo ?? this.telefoneFixo,
-      celular: celular ?? this.celular,
-      email: email ?? this.email,
-      observacoes: observacoes ?? this.observacoes,
+      apelido: apelido == _undefined ? this.apelido : apelido as String?,
+      cpf: cpf == _undefined ? this.cpf : cpf as String?,
+      rua: rua == _undefined ? this.rua : rua as String?,
+      numero: numero == _undefined ? this.numero : numero as String?,
+      complemento: complemento == _undefined ? this.complemento : complemento as String?,
+      bairro: bairro == _undefined ? this.bairro : bairro as String?,
+      cidade: cidade == _undefined ? this.cidade : cidade as String?,
+      uf: uf == _undefined ? this.uf : uf as String?,
+      cep: cep == _undefined ? this.cep : cep as String?,
+      telefoneFixo: telefoneFixo == _undefined ? this.telefoneFixo : telefoneFixo as String?,
+      celular: celular == _undefined ? this.celular : celular as String?,
+      email: email == _undefined ? this.email : email as String?,
+      observacoes: observacoes == _undefined ? this.observacoes : observacoes as String?,
       isAtivo: isAtivo ?? this.isAtivo,
       createdAt: createdAt ?? this.createdAt,
     );

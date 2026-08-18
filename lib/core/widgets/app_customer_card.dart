@@ -6,18 +6,16 @@ class AppCustomerCard extends StatelessWidget {
   final String phone;
   final String? avatarUrl;
   
-  /// Lista de tags exibidas EM LINHA e ACIMA do nome (ex: Ativo, Visitado, Novo)
   final List<Widget>? topTags;
   
-  /// Widget opcional à esquerda do Avatar (ex: Checkbox + Número do Itinerário)
   final Widget? leading;
   
-  /// Widget opcional à direita (ex: Setas de ordenação up/down)
   final Widget? trailing;
   
   final VoidCallback? onTap;
   final bool isVisited;
   final bool isNew;
+  final bool showChevron;
 
   const AppCustomerCard({
     super.key,
@@ -31,6 +29,7 @@ class AppCustomerCard extends StatelessWidget {
     this.onTap,
     this.isVisited = false,
     this.isNew = false,
+    this.showChevron = true,
   });
 
   @override
@@ -68,10 +67,11 @@ class AppCustomerCard extends StatelessWidget {
             padding: const EdgeInsets.only(left: 4.0, right: 12.0, top: 8.0, bottom: 8.0),
             child: Row(
               children: [
-                // 1. Leading (Checkbox/Número no itinerário, se houver)
-                ?leading,
+                if (leading != null) ...[
+                  leading!,
+                  const SizedBox(width: 8),
+                ],
 
-                // 2. Avatar com ContinuousRectangleBorder (design original)
                 Opacity(
                   opacity: textOpacity,
                   child: Container(
@@ -93,13 +93,11 @@ class AppCustomerCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
 
-                // 3. Coluna Central: Tags Em Cima + Nome + CPF + Telefone
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // LINHA DE TAGS (Acima do nome)
                       if (hasTags) ...[
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -108,7 +106,6 @@ class AppCustomerCard extends StatelessWidget {
                         const SizedBox(height: 4),
                       ],
 
-                      // DADOS DO CLIENTE
                       Opacity(
                         opacity: textOpacity,
                         child: Column(
@@ -151,12 +148,14 @@ class AppCustomerCard extends StatelessWidget {
                   ),
                 ),
 
-                // 4. Chevron e Ações Trailing (Setas de reordenação)
-                Icon(
-                  Icons.chevron_right,
-                  color: Colors.grey.shade700,
-                  size: 18,
-                ),
+                if (showChevron) ...[
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey.shade700,
+                    size: 18,
+                  ),
+                ],
                 if (trailing != null) ...[
                   const SizedBox(width: 4),
                   trailing!,
