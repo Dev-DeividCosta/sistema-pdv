@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.5.0...v1.6.0) (2026-08-18)
+
+
+### Features
+
+* **customer:** Reformulação do Cadastro e Hub ([#18](https://github.com/Dev-DeividCosta/sistema-pdv/issues/18)) ([4cb4f58](https://github.com/Dev-DeividCosta/sistema-pdv/commit/4cb4f58752534cf1c4b9fec1464eaf0cfe18d7b1))
+
 # [1.5.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.4.0...v1.5.0) (2026-08-17)
 
 
