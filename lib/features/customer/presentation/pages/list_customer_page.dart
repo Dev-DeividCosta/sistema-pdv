@@ -6,7 +6,9 @@ import '../../../../core/widgets/app_customer_card.dart';
 import '../../../../core/widgets/status_tag.dart';
 import '../../domain/entities/customer.dart';
 import '../providers/customer_form_provider.dart';
-import 'new_customer_page.dart';
+import 'customer_form_page.dart';
+
+import 'customer_hub_page.dart';
 
 class ListCustomerPage extends ConsumerStatefulWidget {
   const ListCustomerPage({super.key});
@@ -55,7 +57,7 @@ class _ListCustomerPageState extends ConsumerState<ListCustomerPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const NewCustomerScreen(),
+              builder: (_) => const CustomerFormPage(mode: CustomerFormMode.create),
             ),
           );
         },
@@ -155,7 +157,12 @@ class _ListCustomerPageState extends ConsumerState<ListCustomerPage> {
                                   ),
                                 ],
                                 onTap: () {
-                                  // TODO: Abrir detalhes
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CustomerHubPage(customer: customer),
+                                    ),
+                                  );
                                 },
                               );
                             },
