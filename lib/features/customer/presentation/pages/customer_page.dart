@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/widgets/app_menu_tile.dart';
-import '../../../../core/widgets/responsive_menu_grid.dart';
+import '../../../../core/widgets/menu/app_menu_tile.dart';
+import '../../../../core/widgets/menu/responsive_menu_grid.dart';
 import '../builders/customer_menu_builder.dart';
 
 class CustomerScreen extends StatelessWidget {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart'; 
+import '../../../../core/constants/app_colors.dart';
 import '../../../customer/presentation/pages/customer_page.dart';
 import '../../../itinerary/presentation/pages/itinerary_cities_page.dart';
+import '../../../city/presentation/pages/city_menu_page.dart';
 
 abstract class DashboardBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context); 
@@ -124,9 +126,16 @@ class DashboardBuilderImpl implements DashboardBuilder {
       ),
       AppMenuItem(
         icon: Icons.map,
-        title: 'Regiões de\nAtuação',
-        color: const Color(0xFF4DB6AC),
-        onTap: () {},
+        title: 'Cidades de\nAtuação',
+        color: AppMenuColors.city,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CityMenuPage(),
+            ),
+          );
+        },
       ),
       AppMenuItem(
         icon: Icons.assignment_return,

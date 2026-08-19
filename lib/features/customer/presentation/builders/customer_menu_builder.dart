@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart';
 import '../pages/customer_form_page.dart';
-import '../pages/list_customer_page.dart';
+import '../pages/customer_list_page.dart';
 
 abstract class CustomerMenuBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context);
@@ -34,7 +34,7 @@ class CustomerMenuBuilderImpl implements CustomerMenuBuilder {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const ListCustomerPage(),
+              builder: (context) => const CustomerListPage(),
             ),
           );
         },

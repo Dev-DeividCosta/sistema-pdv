@@ -3,7 +3,7 @@ import '../builders/dashboard_menu_builder.dart';
 import '../widgets/dashboard_app_bar.dart';
 import '../widgets/dashboard_bottom_bar.dart';
 
-import '../../../../core/widgets/responsive_menu_grid.dart';
+import '../../../../core/widgets/menu/responsive_menu_grid.dart';
 
 class DashboardScreen extends StatelessWidget {
   final DashboardBuilder builder;

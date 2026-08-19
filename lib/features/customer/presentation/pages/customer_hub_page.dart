@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/widgets/app_menu_tile.dart';
-import '../../../../core/widgets/app_customer_card.dart';
+import '../../../../core/widgets/menu/app_menu_tile.dart';
+import '../../../../core/widgets/cards/app_customer_card.dart';
 import '../../../../core/widgets/status_tag.dart';
 import '../../domain/entities/customer.dart';
 import '../builders/customer_hub_menu_builder.dart';
