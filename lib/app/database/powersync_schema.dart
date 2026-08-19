@@ -20,4 +20,12 @@ const schema = Schema([
     Column.integer('is_deleted'),
     Column.text('created_at'),
   ]),
+  
+  Table('cities', [
+    Column.text('nome'),
+    Column.text('estado'),
+    Column.integer('is_ativo'),
+    Column.integer('is_deleted'),
+    Column.text('created_at'),
+  ]),
 ]);
