@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/widgets/app_group_card.dart';
-import '../../../../core/widgets/app_customer_card.dart';
+import '../../../../core/widgets/list/app_group_card.dart';
+import '../../../../core/widgets/cards/app_customer_card.dart';
 import '../../../../core/widgets/status_tag.dart';
 import '../../domain/entities/customer.dart';
 import '../providers/customer_form_provider.dart';
@@ -10,14 +10,14 @@ import 'customer_form_page.dart';
 
 import 'customer_hub_page.dart';
 
-class ListCustomerPage extends ConsumerStatefulWidget {
-  const ListCustomerPage({super.key});
+class CustomerListPage extends ConsumerStatefulWidget {
+  const CustomerListPage({super.key});
 
   @override
-  ConsumerState<ListCustomerPage> createState() => _ListCustomerPageState();
+  ConsumerState<CustomerListPage> createState() => _CustomerListPageState();
 }
 
-class _ListCustomerPageState extends ConsumerState<ListCustomerPage> {
+class _CustomerListPageState extends ConsumerState<CustomerListPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 

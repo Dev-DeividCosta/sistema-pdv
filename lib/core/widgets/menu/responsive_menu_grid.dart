@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/app_menu_item.dart';
+import '../../models/app_menu_item.dart';
 import 'app_menu_tile.dart';
 
 class ResponsiveMenuGrid extends StatelessWidget {

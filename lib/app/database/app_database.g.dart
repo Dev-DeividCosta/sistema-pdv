@@ -805,12 +805,347 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
   }
 }
 
+class $CitiesTable extends Cities with TableInfo<$CitiesTable, City> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CitiesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _nomeMeta = const VerificationMeta('nome');
+  @override
+  late final GeneratedColumn<String> nome = GeneratedColumn<String>(
+      'nome', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _estadoMeta = const VerificationMeta('estado');
+  @override
+  late final GeneratedColumn<String> estado = GeneratedColumn<String>(
+      'estado', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _isAtivoMeta =
+      const VerificationMeta('isAtivo');
+  @override
+  late final GeneratedColumn<bool> isAtivo = GeneratedColumn<bool>(
+      'is_ativo', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_ativo" IN (0, 1))'),
+      defaultValue: const Constant(true));
+  static const VerificationMeta _isDeletedMeta =
+      const VerificationMeta('isDeleted');
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+      'is_deleted', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, nome, estado, isAtivo, isDeleted, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cities';
+  @override
+  VerificationContext validateIntegrity(Insertable<City> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('nome')) {
+      context.handle(
+          _nomeMeta, nome.isAcceptableOrUnknown(data['nome']!, _nomeMeta));
+    } else if (isInserting) {
+      context.missing(_nomeMeta);
+    }
+    if (data.containsKey('estado')) {
+      context.handle(_estadoMeta,
+          estado.isAcceptableOrUnknown(data['estado']!, _estadoMeta));
+    } else if (isInserting) {
+      context.missing(_estadoMeta);
+    }
+    if (data.containsKey('is_ativo')) {
+      context.handle(_isAtivoMeta,
+          isAtivo.isAcceptableOrUnknown(data['is_ativo']!, _isAtivoMeta));
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(_isDeletedMeta,
+          isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  City map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return City(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      nome: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nome'])!,
+      estado: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}estado'])!,
+      isAtivo: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_ativo'])!,
+      isDeleted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $CitiesTable createAlias(String alias) {
+    return $CitiesTable(attachedDatabase, alias);
+  }
+}
+
+class City extends DataClass implements Insertable<City> {
+  final String id;
+  final String nome;
+  final String estado;
+  final bool isAtivo;
+  final bool isDeleted;
+  final DateTime createdAt;
+  const City(
+      {required this.id,
+      required this.nome,
+      required this.estado,
+      required this.isAtivo,
+      required this.isDeleted,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['nome'] = Variable<String>(nome);
+    map['estado'] = Variable<String>(estado);
+    map['is_ativo'] = Variable<bool>(isAtivo);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  CitiesCompanion toCompanion(bool nullToAbsent) {
+    return CitiesCompanion(
+      id: Value(id),
+      nome: Value(nome),
+      estado: Value(estado),
+      isAtivo: Value(isAtivo),
+      isDeleted: Value(isDeleted),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory City.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return City(
+      id: serializer.fromJson<String>(json['id']),
+      nome: serializer.fromJson<String>(json['nome']),
+      estado: serializer.fromJson<String>(json['estado']),
+      isAtivo: serializer.fromJson<bool>(json['isAtivo']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'nome': serializer.toJson<String>(nome),
+      'estado': serializer.toJson<String>(estado),
+      'isAtivo': serializer.toJson<bool>(isAtivo),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  City copyWith(
+          {String? id,
+          String? nome,
+          String? estado,
+          bool? isAtivo,
+          bool? isDeleted,
+          DateTime? createdAt}) =>
+      City(
+        id: id ?? this.id,
+        nome: nome ?? this.nome,
+        estado: estado ?? this.estado,
+        isAtivo: isAtivo ?? this.isAtivo,
+        isDeleted: isDeleted ?? this.isDeleted,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('City(')
+          ..write('id: $id, ')
+          ..write('nome: $nome, ')
+          ..write('estado: $estado, ')
+          ..write('isAtivo: $isAtivo, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, nome, estado, isAtivo, isDeleted, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is City &&
+          other.id == this.id &&
+          other.nome == this.nome &&
+          other.estado == this.estado &&
+          other.isAtivo == this.isAtivo &&
+          other.isDeleted == this.isDeleted &&
+          other.createdAt == this.createdAt);
+}
+
+class CitiesCompanion extends UpdateCompanion<City> {
+  final Value<String> id;
+  final Value<String> nome;
+  final Value<String> estado;
+  final Value<bool> isAtivo;
+  final Value<bool> isDeleted;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const CitiesCompanion({
+    this.id = const Value.absent(),
+    this.nome = const Value.absent(),
+    this.estado = const Value.absent(),
+    this.isAtivo = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CitiesCompanion.insert({
+    required String id,
+    required String nome,
+    required String estado,
+    this.isAtivo = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        nome = Value(nome),
+        estado = Value(estado);
+  static Insertable<City> custom({
+    Expression<String>? id,
+    Expression<String>? nome,
+    Expression<String>? estado,
+    Expression<bool>? isAtivo,
+    Expression<bool>? isDeleted,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (nome != null) 'nome': nome,
+      if (estado != null) 'estado': estado,
+      if (isAtivo != null) 'is_ativo': isAtivo,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CitiesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? nome,
+      Value<String>? estado,
+      Value<bool>? isAtivo,
+      Value<bool>? isDeleted,
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
+    return CitiesCompanion(
+      id: id ?? this.id,
+      nome: nome ?? this.nome,
+      estado: estado ?? this.estado,
+      isAtivo: isAtivo ?? this.isAtivo,
+      isDeleted: isDeleted ?? this.isDeleted,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (nome.present) {
+      map['nome'] = Variable<String>(nome.value);
+    }
+    if (estado.present) {
+      map['estado'] = Variable<String>(estado.value);
+    }
+    if (isAtivo.present) {
+      map['is_ativo'] = Variable<bool>(isAtivo.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CitiesCompanion(')
+          ..write('id: $id, ')
+          ..write('nome: $nome, ')
+          ..write('estado: $estado, ')
+          ..write('isAtivo: $isAtivo, ')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $CustomersTable customers = $CustomersTable(this);
+  late final $CitiesTable cities = $CitiesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [customers];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [customers, cities];
 }
