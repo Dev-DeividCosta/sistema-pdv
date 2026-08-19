@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.6.0...v1.7.0) (2026-08-19)
+
+
+### Features
+
+* **city:** implementa cadastro e gerenciamento de cidades ([#20](https://github.com/Dev-DeividCosta/sistema-pdv/issues/20)) ([67f254c](https://github.com/Dev-DeividCosta/sistema-pdv/commit/67f254ce7599b49c90493cf7584dea19d9ce9637))
+
 # [1.6.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.5.0...v1.6.0) (2026-08-18)
 
 
