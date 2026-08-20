@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.7.0...v1.8.0) (2026-08-20)
+
+
+### Features
+
+* **customer:** vincula clientes a cidades e reorganiza cadastro ([#22](https://github.com/Dev-DeividCosta/sistema-pdv/issues/22)) ([3478170](https://github.com/Dev-DeividCosta/sistema-pdv/commit/3478170573363cd675343ad8b5e7fcc1c89e1b30))
+
 # [1.7.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.6.0...v1.7.0) (2026-08-19)
 
 
