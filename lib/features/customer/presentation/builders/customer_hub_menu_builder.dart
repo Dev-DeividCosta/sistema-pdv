@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/models/app_menu_item.dart';
 import '../../domain/entities/customer.dart';
 import '../pages/customer_form_page.dart';
+import '../../../../core/widgets/forms/form_mode.dart';
 
 abstract class CustomerHubMenuBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context, CustomerEntity customer);
@@ -69,7 +70,7 @@ class CustomerHubMenuBuilderImpl implements CustomerHubMenuBuilder {
             MaterialPageRoute(
               builder: (_) => CustomerFormPage(
                 customer: customer,
-                mode: CustomerFormMode.view,
+                mode: AppFormMode.view,
               ),
             ),
           );
@@ -85,7 +86,7 @@ class CustomerHubMenuBuilderImpl implements CustomerHubMenuBuilder {
             MaterialPageRoute(
               builder: (_) => CustomerFormPage(
                 customer: customer,
-                mode: CustomerFormMode.edit,
+                mode: AppFormMode.edit,
               ),
             ),
           );

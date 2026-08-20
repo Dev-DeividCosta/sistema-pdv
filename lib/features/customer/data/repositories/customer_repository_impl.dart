@@ -28,7 +28,7 @@ class CustomerRepositoryImpl implements CustomerRepository {
       numero: Value(customer.numero),
       complemento: Value(customer.complemento),
       bairro: Value(customer.bairro),
-      cidade: Value(customer.cidade),
+      cityId: Value(customer.cityId),
       uf: Value(customer.uf),
       cep: Value(customer.cep),
       telefoneFixo: Value(customer.telefoneFixo),

@@ -51,10 +51,10 @@ class $CustomersTable extends Customers
   late final GeneratedColumn<String> bairro = GeneratedColumn<String>(
       'bairro', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _cidadeMeta = const VerificationMeta('cidade');
+  static const VerificationMeta _cityIdMeta = const VerificationMeta('cityId');
   @override
-  late final GeneratedColumn<String> cidade = GeneratedColumn<String>(
-      'cidade', aliasedName, true,
+  late final GeneratedColumn<String> cityId = GeneratedColumn<String>(
+      'city_id', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _ufMeta = const VerificationMeta('uf');
   @override
@@ -127,7 +127,7 @@ class $CustomersTable extends Customers
         numero,
         complemento,
         bairro,
-        cidade,
+        cityId,
         uf,
         cep,
         telefoneFixo,
@@ -185,9 +185,9 @@ class $CustomersTable extends Customers
       context.handle(_bairroMeta,
           bairro.isAcceptableOrUnknown(data['bairro']!, _bairroMeta));
     }
-    if (data.containsKey('cidade')) {
-      context.handle(_cidadeMeta,
-          cidade.isAcceptableOrUnknown(data['cidade']!, _cidadeMeta));
+    if (data.containsKey('city_id')) {
+      context.handle(_cityIdMeta,
+          cityId.isAcceptableOrUnknown(data['city_id']!, _cityIdMeta));
     }
     if (data.containsKey('uf')) {
       context.handle(_ufMeta, uf.isAcceptableOrUnknown(data['uf']!, _ufMeta));
@@ -253,8 +253,8 @@ class $CustomersTable extends Customers
           .read(DriftSqlType.string, data['${effectivePrefix}complemento']),
       bairro: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}bairro']),
-      cidade: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}cidade']),
+      cityId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}city_id']),
       uf: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}uf']),
       cep: attachedDatabase.typeMapping
@@ -291,7 +291,7 @@ class Customer extends DataClass implements Insertable<Customer> {
   final String? numero;
   final String? complemento;
   final String? bairro;
-  final String? cidade;
+  final String? cityId;
   final String? uf;
   final String? cep;
   final String? telefoneFixo;
@@ -310,7 +310,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       this.numero,
       this.complemento,
       this.bairro,
-      this.cidade,
+      this.cityId,
       this.uf,
       this.cep,
       this.telefoneFixo,
@@ -343,8 +343,8 @@ class Customer extends DataClass implements Insertable<Customer> {
     if (!nullToAbsent || bairro != null) {
       map['bairro'] = Variable<String>(bairro);
     }
-    if (!nullToAbsent || cidade != null) {
-      map['cidade'] = Variable<String>(cidade);
+    if (!nullToAbsent || cityId != null) {
+      map['city_id'] = Variable<String>(cityId);
     }
     if (!nullToAbsent || uf != null) {
       map['uf'] = Variable<String>(uf);
@@ -386,8 +386,8 @@ class Customer extends DataClass implements Insertable<Customer> {
           : Value(complemento),
       bairro:
           bairro == null && nullToAbsent ? const Value.absent() : Value(bairro),
-      cidade:
-          cidade == null && nullToAbsent ? const Value.absent() : Value(cidade),
+      cityId:
+          cityId == null && nullToAbsent ? const Value.absent() : Value(cityId),
       uf: uf == null && nullToAbsent ? const Value.absent() : Value(uf),
       cep: cep == null && nullToAbsent ? const Value.absent() : Value(cep),
       telefoneFixo: telefoneFixo == null && nullToAbsent
@@ -419,7 +419,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       numero: serializer.fromJson<String?>(json['numero']),
       complemento: serializer.fromJson<String?>(json['complemento']),
       bairro: serializer.fromJson<String?>(json['bairro']),
-      cidade: serializer.fromJson<String?>(json['cidade']),
+      cityId: serializer.fromJson<String?>(json['cityId']),
       uf: serializer.fromJson<String?>(json['uf']),
       cep: serializer.fromJson<String?>(json['cep']),
       telefoneFixo: serializer.fromJson<String?>(json['telefoneFixo']),
@@ -443,7 +443,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       'numero': serializer.toJson<String?>(numero),
       'complemento': serializer.toJson<String?>(complemento),
       'bairro': serializer.toJson<String?>(bairro),
-      'cidade': serializer.toJson<String?>(cidade),
+      'cityId': serializer.toJson<String?>(cityId),
       'uf': serializer.toJson<String?>(uf),
       'cep': serializer.toJson<String?>(cep),
       'telefoneFixo': serializer.toJson<String?>(telefoneFixo),
@@ -465,7 +465,7 @@ class Customer extends DataClass implements Insertable<Customer> {
           Value<String?> numero = const Value.absent(),
           Value<String?> complemento = const Value.absent(),
           Value<String?> bairro = const Value.absent(),
-          Value<String?> cidade = const Value.absent(),
+          Value<String?> cityId = const Value.absent(),
           Value<String?> uf = const Value.absent(),
           Value<String?> cep = const Value.absent(),
           Value<String?> telefoneFixo = const Value.absent(),
@@ -484,7 +484,7 @@ class Customer extends DataClass implements Insertable<Customer> {
         numero: numero.present ? numero.value : this.numero,
         complemento: complemento.present ? complemento.value : this.complemento,
         bairro: bairro.present ? bairro.value : this.bairro,
-        cidade: cidade.present ? cidade.value : this.cidade,
+        cityId: cityId.present ? cityId.value : this.cityId,
         uf: uf.present ? uf.value : this.uf,
         cep: cep.present ? cep.value : this.cep,
         telefoneFixo:
@@ -507,7 +507,7 @@ class Customer extends DataClass implements Insertable<Customer> {
           ..write('numero: $numero, ')
           ..write('complemento: $complemento, ')
           ..write('bairro: $bairro, ')
-          ..write('cidade: $cidade, ')
+          ..write('cityId: $cityId, ')
           ..write('uf: $uf, ')
           ..write('cep: $cep, ')
           ..write('telefoneFixo: $telefoneFixo, ')
@@ -531,7 +531,7 @@ class Customer extends DataClass implements Insertable<Customer> {
       numero,
       complemento,
       bairro,
-      cidade,
+      cityId,
       uf,
       cep,
       telefoneFixo,
@@ -553,7 +553,7 @@ class Customer extends DataClass implements Insertable<Customer> {
           other.numero == this.numero &&
           other.complemento == this.complemento &&
           other.bairro == this.bairro &&
-          other.cidade == this.cidade &&
+          other.cityId == this.cityId &&
           other.uf == this.uf &&
           other.cep == this.cep &&
           other.telefoneFixo == this.telefoneFixo &&
@@ -574,7 +574,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
   final Value<String?> numero;
   final Value<String?> complemento;
   final Value<String?> bairro;
-  final Value<String?> cidade;
+  final Value<String?> cityId;
   final Value<String?> uf;
   final Value<String?> cep;
   final Value<String?> telefoneFixo;
@@ -594,7 +594,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     this.numero = const Value.absent(),
     this.complemento = const Value.absent(),
     this.bairro = const Value.absent(),
-    this.cidade = const Value.absent(),
+    this.cityId = const Value.absent(),
     this.uf = const Value.absent(),
     this.cep = const Value.absent(),
     this.telefoneFixo = const Value.absent(),
@@ -615,7 +615,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     this.numero = const Value.absent(),
     this.complemento = const Value.absent(),
     this.bairro = const Value.absent(),
-    this.cidade = const Value.absent(),
+    this.cityId = const Value.absent(),
     this.uf = const Value.absent(),
     this.cep = const Value.absent(),
     this.telefoneFixo = const Value.absent(),
@@ -637,7 +637,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     Expression<String>? numero,
     Expression<String>? complemento,
     Expression<String>? bairro,
-    Expression<String>? cidade,
+    Expression<String>? cityId,
     Expression<String>? uf,
     Expression<String>? cep,
     Expression<String>? telefoneFixo,
@@ -658,7 +658,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       if (numero != null) 'numero': numero,
       if (complemento != null) 'complemento': complemento,
       if (bairro != null) 'bairro': bairro,
-      if (cidade != null) 'cidade': cidade,
+      if (cityId != null) 'city_id': cityId,
       if (uf != null) 'uf': uf,
       if (cep != null) 'cep': cep,
       if (telefoneFixo != null) 'telefone_fixo': telefoneFixo,
@@ -681,7 +681,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       Value<String?>? numero,
       Value<String?>? complemento,
       Value<String?>? bairro,
-      Value<String?>? cidade,
+      Value<String?>? cityId,
       Value<String?>? uf,
       Value<String?>? cep,
       Value<String?>? telefoneFixo,
@@ -701,7 +701,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       numero: numero ?? this.numero,
       complemento: complemento ?? this.complemento,
       bairro: bairro ?? this.bairro,
-      cidade: cidade ?? this.cidade,
+      cityId: cityId ?? this.cityId,
       uf: uf ?? this.uf,
       cep: cep ?? this.cep,
       telefoneFixo: telefoneFixo ?? this.telefoneFixo,
@@ -742,8 +742,8 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     if (bairro.present) {
       map['bairro'] = Variable<String>(bairro.value);
     }
-    if (cidade.present) {
-      map['cidade'] = Variable<String>(cidade.value);
+    if (cityId.present) {
+      map['city_id'] = Variable<String>(cityId.value);
     }
     if (uf.present) {
       map['uf'] = Variable<String>(uf.value);
@@ -789,7 +789,7 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
           ..write('numero: $numero, ')
           ..write('complemento: $complemento, ')
           ..write('bairro: $bairro, ')
-          ..write('cidade: $cidade, ')
+          ..write('cityId: $cityId, ')
           ..write('uf: $uf, ')
           ..write('cep: $cep, ')
           ..write('telefoneFixo: $telefoneFixo, ')

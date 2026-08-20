@@ -9,7 +9,7 @@ const schema = Schema([
     Column.text('numero'),
     Column.text('complemento'),
     Column.text('bairro'),
-    Column.text('cidade'),
+    Column.text('city_id'),
     Column.text('uf'),
     Column.text('cep'),
     Column.text('telefone_fixo'),
@@ -20,7 +20,6 @@ const schema = Schema([
     Column.integer('is_deleted'),
     Column.text('created_at'),
   ]),
-  
   Table('cities', [
     Column.text('nome'),
     Column.text('estado'),

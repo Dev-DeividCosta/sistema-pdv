@@ -12,7 +12,7 @@ extension CustomerModelMapper on db.Customer {
       numero: numero,
       complemento: complemento,
       bairro: bairro,
-      cidade: cidade,
+      cityId: cityId,
       uf: uf,
       cep: cep,
       telefoneFixo: telefoneFixo,

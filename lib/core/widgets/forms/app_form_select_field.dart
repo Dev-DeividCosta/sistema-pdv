@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
 
+class AppFormSelectAction {
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const AppFormSelectAction({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+}
+
 class AppFormSelectField<T> extends StatelessWidget {
   final String label;
   final T? value;
@@ -9,6 +21,7 @@ class AppFormSelectField<T> extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onReadOnlyTap;
   final String? sheetTitle;
+  final AppFormSelectAction? action;
 
   const AppFormSelectField({
     super.key,
@@ -20,6 +33,7 @@ class AppFormSelectField<T> extends StatelessWidget {
     this.readOnly = false,
     this.onReadOnlyTap,
     this.sheetTitle,
+    this.action,
   });
 
   void _showBottomSheet(BuildContext context, FormFieldState<T> fieldState) {
@@ -44,8 +58,33 @@ class AppFormSelectField<T> extends StatelessWidget {
                 decoration: BoxDecoration(color: Colors.white30, borderRadius: BorderRadius.circular(2)),
               ),
               Text(sheetTitle ?? 'Selecione $label', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-              const Divider(color: Colors.white12),
+                            const Divider(color: Colors.white12),
+              if (action != null) ...[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        action!.onPressed();
+                      },
+                      icon: Icon(action!.icon, size: 18),
+                      label: Text(action!.label),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(46),
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Colors.white.withValues(alpha: 0.35)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
               Expanded(
+
                 child: ListView.builder(
                   itemCount: options.length,
                   itemBuilder: (context, index) {
