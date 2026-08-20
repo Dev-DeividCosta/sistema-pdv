@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/models/app_menu_item.dart'; 
 import '../../../../core/constants/app_colors.dart';
-import '../../../customer/presentation/pages/customer_page.dart';
+import '../../../customer/presentation/pages/customer_menu_page.dart';
 import '../../../itinerary/presentation/pages/itinerary_cities_page.dart';
 import '../../../city/presentation/pages/city_menu_page.dart';
 
@@ -16,12 +16,12 @@ class DashboardBuilderImpl implements DashboardBuilder {
       AppMenuItem(
         icon: Icons.group,
         title: 'Clientes',
-        color: const Color(0xFF2D4B68),
+        color: AppMenuColors.customer,
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const CustomerScreen(),
+              builder: (context) => const CustomerMenuPage(),
             ),
           );
         },

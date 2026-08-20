@@ -3,6 +3,7 @@ import '../../data/models/user_data.dart';
 import '../widgets/itinerary_progress_header.dart';
 import '../widgets/itinerary_user_tile.dart';
 import '../../../customer/presentation/pages/customer_form_page.dart';
+import '../../../../core/widgets/forms/form_mode.dart';
 
 class ItineraryPlanningPage extends StatefulWidget {
   final String cityName;
@@ -91,7 +92,7 @@ class _ItineraryPlanningPageState extends State<ItineraryPlanningPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const CustomerFormPage(mode: CustomerFormMode.create),
+        builder: (_) => CustomerFormPage(mode: AppFormMode.create),
       ),
     );
   }

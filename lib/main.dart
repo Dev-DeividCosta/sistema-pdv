@@ -2,27 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:powersync/powersync.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:sistema_pdv/app/database/app_database.dart';
 import 'package:sistema_pdv/app/database/powersync_schema.dart';
-import 'package:sistema_pdv/features/customer/presentation/providers/customer_form_provider.dart';
+import 'package:sistema_pdv/app/providers/app_database_provider.dart';
 import 'package:sistema_pdv/features/home/presentation/builders/dashboard_menu_builder.dart';
 import 'package:sistema_pdv/features/home/presentation/pages/dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1. Inicializa a engine do PowerSync localmente com o Schema
+  final dir = await getApplicationSupportDirectory();
+  final dbPath = join(dir.path, 'sistema_pdv.sqlite');
+
   final powerSyncDb = PowerSyncDatabase(
     schema: schema,
-    path: 'sistema_pdv.sqlite',
+    path: dbPath,
   );
+  
   await powerSyncDb.initialize();
 
-  // 2. Cria a instância do Drift Database a partir da conexão PowerSync
   final bancoDeDados = createDatabase(powerSyncDb);
 
-  // 3. Trava a orientação da tela e injeta o banco de dados via Riverpod
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {

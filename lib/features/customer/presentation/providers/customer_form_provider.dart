@@ -1,60 +1,43 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../app/database/app_database.dart';
+import '../../../../app/providers/app_database_provider.dart';
 import '../../data/datasources/customer_local_datasource.dart';
 import '../../data/repositories/customer_repository_impl.dart';
 import '../../domain/entities/customer.dart';
 import '../../domain/repositories/customer_repository.dart';
 import '../../domain/usecases/save_customer_usecase.dart';
 
-// 1. Provider do Banco de Dados (Altere caso já tenha um provider global de AppDatabase)
-final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  throw UnimplementedError('Inicialize o appDatabaseProvider no ProviderScope no main.dart');
-});
-
-// 2. Provider do DataSource Local
 final customerLocalDataSourceProvider = Provider<CustomerLocalDataSource>((ref) {
-  final db = ref.watch(appDatabaseProvider);
-  return CustomerLocalDataSource(db);
+  return CustomerLocalDataSource(ref.watch(appDatabaseProvider));
 });
 
-// 3. Provider do Repositório
 final customerRepositoryProvider = Provider<CustomerRepository>((ref) {
-  final dataSource = ref.watch(customerLocalDataSourceProvider);
-  return CustomerRepositoryImpl(dataSource);
+  return CustomerRepositoryImpl(ref.watch(customerLocalDataSourceProvider));
 });
 
 final customersStreamProvider = StreamProvider.autoDispose<List<CustomerEntity>>((ref) {
-  final repository = ref.watch(customerRepositoryProvider);
-  return repository.watchCustomers();
+  return ref.watch(customerRepositoryProvider).watchCustomers();
 });
 
-// 4. Provider do UseCase
 final saveCustomerUseCaseProvider = Provider<SaveCustomerUseCase>((ref) {
-  final repository = ref.watch(customerRepositoryProvider);
-  return SaveCustomerUseCase(repository);
+  return SaveCustomerUseCase(ref.watch(customerRepositoryProvider));
 });
 
-// 5. Notifier/Controller da Tela
 class CustomerFormNotifier extends AutoDisposeAsyncNotifier<void> {
   @override
-  FutureOr<void> build() {
-    // Estado inicial vazio
-  }
+  FutureOr<void> build() {}
 
   Future<void> saveCustomer(CustomerEntity customer) async {
-    state = const AsyncValue.loading();
-    
+    state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final useCase = ref.read(saveCustomerUseCaseProvider);
-      await useCase(customer);
-
+      await ref.read(saveCustomerUseCaseProvider)(customer);
       ref.invalidate(customersStreamProvider);
     });
   }
 }
 
-final customerFormProvider = AutoDisposeAsyncNotifierProvider<CustomerFormNotifier, void>(() {
-  return CustomerFormNotifier();
-});
+final customerFormProvider = AutoDisposeAsyncNotifierProvider<CustomerFormNotifier, void>(
+  CustomerFormNotifier.new,
+);

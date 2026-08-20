@@ -7,6 +7,9 @@ class AppFormTextField extends StatelessWidget {
   final bool readOnly;
   final VoidCallback? onReadOnlyTap;
   final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int maxLines;
 
   const AppFormTextField({
     super.key,
@@ -15,6 +18,9 @@ class AppFormTextField extends StatelessWidget {
     this.readOnly = false,
     this.onReadOnlyTap,
     this.validator,
+    this.keyboardType,
+    this.inputFormatters,
+    this.maxLines = 1,
   });
 
   @override
@@ -25,6 +31,9 @@ class AppFormTextField extends StatelessWidget {
       // O pulo do gato: o próprio TextFormField intercepta o clique se estiver em readOnly
       onTap: (readOnly && onReadOnlyTap != null) ? onReadOnlyTap : null,
       validator: validator,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      maxLines: maxLines,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../models/app_menu_item.dart';
 import 'centered_menu_list.dart';
 
@@ -6,26 +7,64 @@ class BaseMenuPage extends StatelessWidget {
   final String title;
   final List<AppMenuItem> items;
   final VoidCallback? onBackPressed;
+  final VoidCallback? onHomePressed;
 
   const BaseMenuPage({
     super.key,
     required this.title,
     required this.items,
     this.onBackPressed,
+    this.onHomePressed,
   });
+
+  void _goBack(BuildContext context) {
+    if (onBackPressed != null) {
+      onBackPressed!();
+      return;
+    }
+
+    Navigator.of(context).pop();
+  }
+
+  void _goHome(BuildContext context) {
+    if (onHomePressed != null) {
+      onHomePressed!();
+      return;
+    }
+
+    // Remove as telas intermediárias e retorna para a primeira rota,
+    // normalmente a Home ou Dashboard.
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF2C2C2C),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leadingWidth: 104,
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              tooltip: 'Voltar',
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => _goBack(context),
+            ),
+            IconButton(
+              tooltip: 'Ir para Home',
+              icon: const Icon(Icons.home_outlined),
+              onPressed: () => _goHome(context),
+            ),
+          ],
+        ),
         title: Text(title),
       ),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
-              // Permite o scroll na tela inteira mesmo se o conteúdo for pequeno
               physics: const AlwaysScrollableScrollPhysics(),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
@@ -36,21 +75,8 @@ class BaseMenuPage extends StatelessWidget {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
-                        // Lista alinhada no topo da tela
                         CenteredMenuList(items: items),
-
-                        // Empurra o botão de voltar para o final da tela
                         const Spacer(),
-
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: onBackPressed ?? () => Navigator.pop(context),
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(200, 50),
-                          ),
-                          child: const Text('Voltar'),
-                        ),
-                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
