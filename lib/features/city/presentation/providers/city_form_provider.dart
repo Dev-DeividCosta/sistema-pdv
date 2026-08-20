@@ -5,7 +5,7 @@ import '../../data/repositories/city_repository_impl.dart';
 import '../../domain/entities/city.dart';
 import '../../domain/repositories/city_repository.dart';
 import '../../domain/usecases/save_city_usecase.dart';
-import '../../../customer/presentation/providers/customer_form_provider.dart';
+import '../../../../app/providers/app_database_provider.dart';
 
 final cityLocalDataSourceProvider = Provider<CityLocalDataSource>((ref) {
   return CityLocalDataSource(ref.watch(appDatabaseProvider));
