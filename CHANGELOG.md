@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.8.0...v1.9.0) (2026-08-25)
+
+
+### Features
+
+* **itinerary:** implementar gerenciamento de itinerarios ([#24](https://github.com/Dev-DeividCosta/sistema-pdv/issues/24)) ([068038e](https://github.com/Dev-DeividCosta/sistema-pdv/commit/068038ede6ab6ef56ff7929189ce3af19888c9c5))
+
 # [1.8.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.7.0...v1.8.0) (2026-08-20)
 
 
