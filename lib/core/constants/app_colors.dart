@@ -13,5 +13,5 @@ class AppMenuColors {
   static const Color receive = Color(0xFF27AE60);
   static const Color employees = Color(0xFFE74C3C);
   static const Color expenses = Color(0xFF5D6D7E);
-  static const Color city = Color(0xFF4DB6AC);
+  static const Color city = Color(0xFF00796B);
 }
