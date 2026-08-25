@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../pages/itinerary_planning_page.dart';
 
 class CityTile extends StatelessWidget {
+  final String cityId;
   final String cityUf;
   final int index;
   final int totalItems;
 
   const CityTile({
     super.key,
+    required this.cityId,
     required this.cityUf,
     required this.index,
     required this.totalItems,
@@ -35,7 +37,10 @@ class CityTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ItineraryPlanningPage(cityName: cityUf),
+                builder: (context) => ItineraryPlanningPage(
+                  cityId: cityId,
+                  cityName: cityUf,
+                ),
               ),
             );
           },

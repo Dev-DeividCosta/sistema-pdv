@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../navigation/app_app_bar.dart';
+import '../navigation/app_navigation_bar.dart';
 
 import '../../models/app_menu_item.dart';
 import '../menu/app_menu_tile.dart';
 
-/// Template compartilhado para hubs de entidades com preview e ações.
-/// A feature fornece somente a fonte reativa, a identidade e o preview.
 class AppEntityHubPage<T> extends ConsumerWidget {
   final T item;
   final String title;
+  final Color appBarColor;
   final ProviderListenable<AsyncValue<List<T>>> itemsProvider;
   final Object Function(T item) idOf;
   final List<AppMenuItem> Function(BuildContext context, T item) menuItemsBuilder;
   final Widget Function(BuildContext context, T item) previewBuilder;
+  final VoidCallback? onAction;
+  final String? actionLabel;
+  final IconData actionIcon;
+  final Color? actionBackgroundColor;
 
   const AppEntityHubPage({
     super.key,
     required this.item,
     required this.title,
+    required this.appBarColor,
     required this.itemsProvider,
     required this.idOf,
     required this.menuItemsBuilder,
     required this.previewBuilder,
+    this.onAction,
+    this.actionLabel,
+    this.actionIcon = Icons.add,
+    this.actionBackgroundColor,
   });
 
   @override
@@ -38,11 +48,20 @@ class AppEntityHubPage<T> extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFF171717),
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: const Color(0xFF171717),
-        elevation: 0,
-        centerTitle: true,
+      extendBody: true,
+      appBar: AppAppBar(
+        title: title,
+        backgroundColor: appBarColor,
+      ),
+      bottomNavigationBar: AppNavigationBar(
+        contextualAction: onAction != null
+            ? ContextualActionButton(
+                icon: actionIcon,
+                label: actionLabel,
+                backgroundColor: actionBackgroundColor,
+                onTap: onAction!,
+              )
+            : null,
       ),
       body: SingleChildScrollView(
         child: Align(
@@ -50,7 +69,7 @@ class AppEntityHubPage<T> extends ConsumerWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -65,15 +84,6 @@ class AppEntityHubPage<T> extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(minimumSize: const Size(200, 50)),
-                      child: const Text('Voltar'),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
                 ],
               ),
             ),

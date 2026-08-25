@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_colors.dart';
+
 import '../../../../core/widgets/hub/app_entity_hub_page.dart';
 import '../../../../core/widgets/status_tag.dart';
 import '../../domain/entities/city.dart';
@@ -20,7 +22,8 @@ class CityHubPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppEntityHubPage<CityEntity>(
       item: city,
-      title: 'Detalhes da Cidade',
+            title: 'Detalhes da Cidade',
+      appBarColor: AppMenuColors.city,
       itemsProvider: citiesStreamProvider,
       idOf: (item) => item.id,
       menuItemsBuilder: menuBuilder.getMenuItems,

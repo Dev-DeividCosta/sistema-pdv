@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../../city/domain/entities/city.dart';
 import 'city_tile.dart';
 
 class CityGroupCard extends StatelessWidget {
   final String letter;
-  final List<String> cities;
+  final List<CityEntity> cities; // <-- MUDOU AQUI: Agora recebe a entidade com ID e Nome
 
   const CityGroupCard({
     super.key,
@@ -38,8 +39,10 @@ class CityGroupCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: cities.asMap().entries.map((entry) {
+                final city = entry.value; // Agora entry.value é um CityEntity
                 return CityTile(
-                  cityUf: entry.value,
+                  cityId: city.id,       // <-- Passa o ID sem erro
+                  cityUf: city.nome,     // <-- Passa o Nome 
                   index: entry.key,
                   totalItems: cities.length,
                 );

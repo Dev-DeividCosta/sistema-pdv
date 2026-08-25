@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/app_form_utils.dart';
 import '../../../../core/widgets/forms/app_form_components.dart';
@@ -110,6 +111,7 @@ class _CityFormPageState extends ConsumerState<CityFormPage> {
 
     return AppFormLayout(
       title: _titleText,
+      appBarColor: AppMenuColors.city,
       child: Form(
         key: _formKey,
         child: Column(

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import '../navigation/app_app_bar.dart';
+import '../navigation/app_navigation_bar.dart';
 import 'app_group_card.dart';
 
-/// Página genérica para entidades exibidas em grupos alfabéticos.
-///
-/// A feature fornece somente a fonte assíncrona, os campos pesquisáveis,
-/// a chave do grupo e a representação visual de cada item.
 class AppGroupedListPage<T> extends StatefulWidget {
   final String title;
+  final Color appBarColor;
   final String searchHint;
   final String emptyMessage;
   final String noResultsMessage;
@@ -16,13 +14,16 @@ class AppGroupedListPage<T> extends StatefulWidget {
   final AsyncValue<List<T>> itemsAsync;
   final List<String> Function(T item) searchFields;
   final String Function(T item) groupKey;
-  final Widget Function(BuildContext context, T item, int index, int totalItems)
-      itemBuilder;
+  final Widget Function(BuildContext context, T item, int index, int totalItems) itemBuilder;
   final VoidCallback? onAdd;
+  final String? actionLabel;
+  final IconData actionIcon;
+  final Color? actionBackgroundColor;
 
   const AppGroupedListPage({
     super.key,
     required this.title,
+    required this.appBarColor,
     required this.searchHint,
     required this.emptyMessage,
     required this.noResultsMessage,
@@ -32,6 +33,9 @@ class AppGroupedListPage<T> extends StatefulWidget {
     required this.groupKey,
     required this.itemBuilder,
     this.onAdd,
+    this.actionLabel,
+    this.actionIcon = Icons.add,
+    this.actionBackgroundColor,
   });
 
   @override
@@ -51,20 +55,22 @@ class _AppGroupedListPageState<T> extends State<AppGroupedListPage<T>> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: const Color(0xFF171717),
-      appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: const Color(0xFF171717),
-        elevation: 0,
-        centerTitle: true,
+      appBar: AppAppBar(
+        title: widget.title,
+        backgroundColor: widget.appBarColor,
       ),
-      floatingActionButton: widget.onAdd == null
-          ? null
-          : FloatingActionButton(
-              backgroundColor: Colors.blueAccent,
-              onPressed: widget.onAdd,
-              child: const Icon(Icons.add, color: Colors.white),
-            ),
+      bottomNavigationBar: AppNavigationBar(
+        contextualAction: widget.onAdd != null
+            ? ContextualActionButton(
+                icon: widget.actionIcon,
+                label: widget.actionLabel,
+                backgroundColor: widget.actionBackgroundColor,
+                onTap: widget.onAdd!,
+              )
+            : null,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -75,9 +81,11 @@ class _AppGroupedListPageState<T> extends State<AppGroupedListPage<T>> {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 600),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                    padding: const EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 8,
+                      bottom: 120,
                     ),
                     child: Column(
                       children: [
@@ -107,9 +115,11 @@ class _AppGroupedListPageState<T> extends State<AppGroupedListPage<T>> {
       data: (items) {
         final filteredItems = items.where(_matchesSearch).toList();
         if (filteredItems.isEmpty) {
-          return _Message(text: _searchQuery.isEmpty
-              ? widget.emptyMessage
-              : '${widget.noResultsMessage} "$_searchQuery".');
+          return _Message(
+            text: _searchQuery.isEmpty
+                ? widget.emptyMessage
+                : '${widget.noResultsMessage} "$_searchQuery".',
+          );
         }
 
         final groupedItems = <String, List<T>>{};
@@ -143,8 +153,8 @@ class _AppGroupedListPageState<T> extends State<AppGroupedListPage<T>> {
 
   bool _matchesSearch(T item) {
     return widget.searchFields(item).any(
-          (field) => field.toLowerCase().contains(_searchQuery),
-        );
+      (field) => field.toLowerCase().contains(_searchQuery),
+    );
   }
 
   int _compareItems(T a, T b) {

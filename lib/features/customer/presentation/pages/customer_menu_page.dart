@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/menu/base_menu_page.dart';
 import '../builders/customer_menu_builder.dart';
 
@@ -16,7 +17,8 @@ class CustomerMenuPage extends StatelessWidget {
 
     return BaseMenuPage(
       title: 'Menu de Clientes',
-      items: menuItems,
+      appBarColor: AppMenuColors.customer,
+      items: menuItems.take(2).toList(),
     );
   }
 }
