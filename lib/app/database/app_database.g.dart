@@ -1139,13 +1139,388 @@ class CitiesCompanion extends UpdateCompanion<City> {
   }
 }
 
+class $ItineraryItemsTable extends ItineraryItems
+    with TableInfo<$ItineraryItemsTable, ItineraryItem> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ItineraryItemsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+      'user_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _customerIdMeta =
+      const VerificationMeta('customerId');
+  @override
+  late final GeneratedColumn<String> customerId = GeneratedColumn<String>(
+      'customer_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _cityIdMeta = const VerificationMeta('cityId');
+  @override
+  late final GeneratedColumn<String> cityId = GeneratedColumn<String>(
+      'city_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _visitOrderMeta =
+      const VerificationMeta('visitOrder');
+  @override
+  late final GeneratedColumn<int> visitOrder = GeneratedColumn<int>(
+      'visit_order', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _isVisitedMeta =
+      const VerificationMeta('isVisited');
+  @override
+  late final GeneratedColumn<bool> isVisited = GeneratedColumn<bool>(
+      'is_visited', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_visited" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, userId, customerId, cityId, visitOrder, isVisited, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'itinerary_items';
+  @override
+  VerificationContext validateIntegrity(Insertable<ItineraryItem> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('customer_id')) {
+      context.handle(
+          _customerIdMeta,
+          customerId.isAcceptableOrUnknown(
+              data['customer_id']!, _customerIdMeta));
+    } else if (isInserting) {
+      context.missing(_customerIdMeta);
+    }
+    if (data.containsKey('city_id')) {
+      context.handle(_cityIdMeta,
+          cityId.isAcceptableOrUnknown(data['city_id']!, _cityIdMeta));
+    } else if (isInserting) {
+      context.missing(_cityIdMeta);
+    }
+    if (data.containsKey('visit_order')) {
+      context.handle(
+          _visitOrderMeta,
+          visitOrder.isAcceptableOrUnknown(
+              data['visit_order']!, _visitOrderMeta));
+    }
+    if (data.containsKey('is_visited')) {
+      context.handle(_isVisitedMeta,
+          isVisited.isAcceptableOrUnknown(data['is_visited']!, _isVisitedMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ItineraryItem map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ItineraryItem(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
+      customerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}customer_id'])!,
+      cityId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}city_id'])!,
+      visitOrder: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}visit_order'])!,
+      isVisited: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_visited'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+    );
+  }
+
+  @override
+  $ItineraryItemsTable createAlias(String alias) {
+    return $ItineraryItemsTable(attachedDatabase, alias);
+  }
+}
+
+class ItineraryItem extends DataClass implements Insertable<ItineraryItem> {
+  final String id;
+  final String userId;
+  final String customerId;
+  final String cityId;
+  final int visitOrder;
+  final bool isVisited;
+  final DateTime createdAt;
+  const ItineraryItem(
+      {required this.id,
+      required this.userId,
+      required this.customerId,
+      required this.cityId,
+      required this.visitOrder,
+      required this.isVisited,
+      required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['customer_id'] = Variable<String>(customerId);
+    map['city_id'] = Variable<String>(cityId);
+    map['visit_order'] = Variable<int>(visitOrder);
+    map['is_visited'] = Variable<bool>(isVisited);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  ItineraryItemsCompanion toCompanion(bool nullToAbsent) {
+    return ItineraryItemsCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      customerId: Value(customerId),
+      cityId: Value(cityId),
+      visitOrder: Value(visitOrder),
+      isVisited: Value(isVisited),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ItineraryItem.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ItineraryItem(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      customerId: serializer.fromJson<String>(json['customerId']),
+      cityId: serializer.fromJson<String>(json['cityId']),
+      visitOrder: serializer.fromJson<int>(json['visitOrder']),
+      isVisited: serializer.fromJson<bool>(json['isVisited']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'customerId': serializer.toJson<String>(customerId),
+      'cityId': serializer.toJson<String>(cityId),
+      'visitOrder': serializer.toJson<int>(visitOrder),
+      'isVisited': serializer.toJson<bool>(isVisited),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  ItineraryItem copyWith(
+          {String? id,
+          String? userId,
+          String? customerId,
+          String? cityId,
+          int? visitOrder,
+          bool? isVisited,
+          DateTime? createdAt}) =>
+      ItineraryItem(
+        id: id ?? this.id,
+        userId: userId ?? this.userId,
+        customerId: customerId ?? this.customerId,
+        cityId: cityId ?? this.cityId,
+        visitOrder: visitOrder ?? this.visitOrder,
+        isVisited: isVisited ?? this.isVisited,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('ItineraryItem(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('customerId: $customerId, ')
+          ..write('cityId: $cityId, ')
+          ..write('visitOrder: $visitOrder, ')
+          ..write('isVisited: $isVisited, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id, userId, customerId, cityId, visitOrder, isVisited, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ItineraryItem &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.customerId == this.customerId &&
+          other.cityId == this.cityId &&
+          other.visitOrder == this.visitOrder &&
+          other.isVisited == this.isVisited &&
+          other.createdAt == this.createdAt);
+}
+
+class ItineraryItemsCompanion extends UpdateCompanion<ItineraryItem> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String> customerId;
+  final Value<String> cityId;
+  final Value<int> visitOrder;
+  final Value<bool> isVisited;
+  final Value<DateTime> createdAt;
+  final Value<int> rowid;
+  const ItineraryItemsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.customerId = const Value.absent(),
+    this.cityId = const Value.absent(),
+    this.visitOrder = const Value.absent(),
+    this.isVisited = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ItineraryItemsCompanion.insert({
+    required String id,
+    required String userId,
+    required String customerId,
+    required String cityId,
+    this.visitOrder = const Value.absent(),
+    this.isVisited = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        userId = Value(userId),
+        customerId = Value(customerId),
+        cityId = Value(cityId);
+  static Insertable<ItineraryItem> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? customerId,
+    Expression<String>? cityId,
+    Expression<int>? visitOrder,
+    Expression<bool>? isVisited,
+    Expression<DateTime>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (customerId != null) 'customer_id': customerId,
+      if (cityId != null) 'city_id': cityId,
+      if (visitOrder != null) 'visit_order': visitOrder,
+      if (isVisited != null) 'is_visited': isVisited,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ItineraryItemsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? userId,
+      Value<String>? customerId,
+      Value<String>? cityId,
+      Value<int>? visitOrder,
+      Value<bool>? isVisited,
+      Value<DateTime>? createdAt,
+      Value<int>? rowid}) {
+    return ItineraryItemsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      customerId: customerId ?? this.customerId,
+      cityId: cityId ?? this.cityId,
+      visitOrder: visitOrder ?? this.visitOrder,
+      isVisited: isVisited ?? this.isVisited,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (customerId.present) {
+      map['customer_id'] = Variable<String>(customerId.value);
+    }
+    if (cityId.present) {
+      map['city_id'] = Variable<String>(cityId.value);
+    }
+    if (visitOrder.present) {
+      map['visit_order'] = Variable<int>(visitOrder.value);
+    }
+    if (isVisited.present) {
+      map['is_visited'] = Variable<bool>(isVisited.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ItineraryItemsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('customerId: $customerId, ')
+          ..write('cityId: $cityId, ')
+          ..write('visitOrder: $visitOrder, ')
+          ..write('isVisited: $isVisited, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $CustomersTable customers = $CustomersTable(this);
   late final $CitiesTable cities = $CitiesTable(this);
+  late final $ItineraryItemsTable itineraryItems = $ItineraryItemsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [customers, cities];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [customers, cities, itineraryItems];
 }

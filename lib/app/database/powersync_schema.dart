@@ -27,4 +27,19 @@ const schema = Schema([
     Column.integer('is_deleted'),
     Column.text('created_at'),
   ]),
+  // Não há autenticação nem backend de sync neste estágio. O roteiro é local.
+  // O nome interno separado permite adicionar a tabela sincronizada no futuro
+  // sem colisão com esta fonte local.
+  Table.localOnly(
+    'local_itinerary_items',
+    [
+      Column.text('user_id'),
+      Column.text('customer_id'),
+      Column.text('city_id'),
+      Column.integer('visit_order'),
+      Column.integer('is_visited'),
+      Column.text('created_at'),
+    ],
+    viewName: 'itinerary_items',
+  ),
 ]);
