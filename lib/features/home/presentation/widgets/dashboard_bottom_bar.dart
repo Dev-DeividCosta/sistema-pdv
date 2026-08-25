@@ -5,13 +5,15 @@ class DashboardBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomAppBarColor = Theme.of(context).bottomAppBarTheme.color ??
+        Theme.of(context).colorScheme.surface;
+
     return SafeArea(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 850),
-        child: BottomAppBar(
+        child: Material(
+          color: bottomAppBarColor,
           elevation: 0,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 8.0,
           child: SizedBox(
             height: 60,
             child: Row(

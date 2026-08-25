@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/cards/app_customer_card.dart';
 import '../../../../core/widgets/forms/form_mode.dart';
 import '../../../../core/widgets/list/app_grouped_list_page.dart';
@@ -33,11 +34,14 @@ class CustomerListPage extends ConsumerWidget {
 
     return AppGroupedListPage<CustomerEntity>(
       title: 'Lista de Clientes',
+      appBarColor: AppMenuColors.customer,
       searchHint: 'Buscar por nome, apelido ou cidade...',
       emptyMessage: 'Nenhum cliente cadastrado.',
       noResultsMessage: 'Nenhum cliente encontrado para',
       loadingErrorLabel: 'Erro ao carregar clientes',
       itemsAsync: ref.watch(customersStreamProvider),
+      actionLabel: 'Cliente',
+      actionBackgroundColor: AppMenuColors.customer,
       searchFields: (customer) => [
         customer.nome,
         customer.apelido ?? '',

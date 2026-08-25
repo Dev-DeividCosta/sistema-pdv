@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/app_form_utils.dart';
 import '../../../../core/utils/cpf_validator.dart';
 import '../../../../core/utils/email_validator.dart';
@@ -236,6 +237,7 @@ class _CustomerFormPageState extends ConsumerState<CustomerFormPage> {
     final loading = ref.watch(customerFormProvider).isLoading;
     return AppFormLayout(
       title: _titleText,
+      appBarColor: AppMenuColors.customer,
       child: Form(
         key: _formKey,
         child: Column(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/app_colors.dart';
+
 import '../../../../core/widgets/list/app_grouped_list_page.dart';
 import '../../../../core/widgets/status_tag.dart';
 import '../../domain/entities/city.dart';
@@ -15,11 +17,14 @@ class CityListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AppGroupedListPage<CityEntity>(
       title: 'Lista de Cidades',
+      appBarColor: AppMenuColors.city,
       searchHint: 'Buscar por nome ou estado...',
       emptyMessage: 'Nenhuma cidade cadastrada.',
       noResultsMessage: 'Nenhuma cidade encontrada para',
       loadingErrorLabel: 'Erro ao carregar cidades',
       itemsAsync: ref.watch(citiesStreamProvider),
+      actionLabel: 'Cidade',
+      actionBackgroundColor: AppMenuColors.city,
       searchFields: (city) => [city.nome, city.estado],
       groupKey: (city) => city.nome,
       onAdd: () => Navigator.push(
