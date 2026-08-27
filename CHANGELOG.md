@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.9.0...v1.10.0) (2026-08-27)
+
+
+### Features
+
+* **product:** implementar gerenciamento de produtos ([#26](https://github.com/Dev-DeividCosta/sistema-pdv/issues/26)) ([8365f8d](https://github.com/Dev-DeividCosta/sistema-pdv/commit/8365f8dcc985a4c32ad06d48b5fce3244d4f637c))
+
 # [1.9.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.8.0...v1.9.0) (2026-08-25)
 
 
