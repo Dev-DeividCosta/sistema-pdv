@@ -1512,15 +1512,563 @@ class ItineraryItemsCompanion extends UpdateCompanion<ItineraryItem> {
   }
 }
 
+class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ProductsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _codigoBarrasMeta =
+      const VerificationMeta('codigoBarras');
+  @override
+  late final GeneratedColumn<String> codigoBarras = GeneratedColumn<String>(
+      'codigo_barras', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _nomeProdutoMeta =
+      const VerificationMeta('nomeProduto');
+  @override
+  late final GeneratedColumn<String> nomeProduto = GeneratedColumn<String>(
+      'nome_produto', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _precoCustoMeta =
+      const VerificationMeta('precoCusto');
+  @override
+  late final GeneratedColumn<double> precoCusto = GeneratedColumn<double>(
+      'preco_custo', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _precoVendaMeta =
+      const VerificationMeta('precoVenda');
+  @override
+  late final GeneratedColumn<double> precoVenda = GeneratedColumn<double>(
+      'preco_venda', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _quantidadeEstoqueMeta =
+      const VerificationMeta('quantidadeEstoque');
+  @override
+  late final GeneratedColumn<int> quantidadeEstoque = GeneratedColumn<int>(
+      'quantidade_estoque', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _ativoMeta = const VerificationMeta('ativo');
+  @override
+  late final GeneratedColumn<bool> ativo = GeneratedColumn<bool>(
+      'ativo', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("ativo" IN (0, 1))'),
+      defaultValue: const Constant(true));
+  static const VerificationMeta _descricaoMeta =
+      const VerificationMeta('descricao');
+  @override
+  late final GeneratedColumn<String> descricao = GeneratedColumn<String>(
+      'descricao', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _estoqueMinimoMeta =
+      const VerificationMeta('estoqueMinimo');
+  @override
+  late final GeneratedColumn<int> estoqueMinimo = GeneratedColumn<int>(
+      'estoque_minimo', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        codigoBarras,
+        nomeProduto,
+        precoCusto,
+        precoVenda,
+        quantidadeEstoque,
+        ativo,
+        descricao,
+        estoqueMinimo,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'products';
+  @override
+  VerificationContext validateIntegrity(Insertable<Product> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('codigo_barras')) {
+      context.handle(
+          _codigoBarrasMeta,
+          codigoBarras.isAcceptableOrUnknown(
+              data['codigo_barras']!, _codigoBarrasMeta));
+    }
+    if (data.containsKey('nome_produto')) {
+      context.handle(
+          _nomeProdutoMeta,
+          nomeProduto.isAcceptableOrUnknown(
+              data['nome_produto']!, _nomeProdutoMeta));
+    } else if (isInserting) {
+      context.missing(_nomeProdutoMeta);
+    }
+    if (data.containsKey('preco_custo')) {
+      context.handle(
+          _precoCustoMeta,
+          precoCusto.isAcceptableOrUnknown(
+              data['preco_custo']!, _precoCustoMeta));
+    } else if (isInserting) {
+      context.missing(_precoCustoMeta);
+    }
+    if (data.containsKey('preco_venda')) {
+      context.handle(
+          _precoVendaMeta,
+          precoVenda.isAcceptableOrUnknown(
+              data['preco_venda']!, _precoVendaMeta));
+    } else if (isInserting) {
+      context.missing(_precoVendaMeta);
+    }
+    if (data.containsKey('quantidade_estoque')) {
+      context.handle(
+          _quantidadeEstoqueMeta,
+          quantidadeEstoque.isAcceptableOrUnknown(
+              data['quantidade_estoque']!, _quantidadeEstoqueMeta));
+    }
+    if (data.containsKey('ativo')) {
+      context.handle(
+          _ativoMeta, ativo.isAcceptableOrUnknown(data['ativo']!, _ativoMeta));
+    }
+    if (data.containsKey('descricao')) {
+      context.handle(_descricaoMeta,
+          descricao.isAcceptableOrUnknown(data['descricao']!, _descricaoMeta));
+    }
+    if (data.containsKey('estoque_minimo')) {
+      context.handle(
+          _estoqueMinimoMeta,
+          estoqueMinimo.isAcceptableOrUnknown(
+              data['estoque_minimo']!, _estoqueMinimoMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Product map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Product(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      codigoBarras: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}codigo_barras']),
+      nomeProduto: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}nome_produto'])!,
+      precoCusto: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}preco_custo'])!,
+      precoVenda: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}preco_venda'])!,
+      quantidadeEstoque: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}quantidade_estoque'])!,
+      ativo: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}ativo'])!,
+      descricao: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}descricao']),
+      estoqueMinimo: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}estoque_minimo'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $ProductsTable createAlias(String alias) {
+    return $ProductsTable(attachedDatabase, alias);
+  }
+}
+
+class Product extends DataClass implements Insertable<Product> {
+  final String id;
+  final String? codigoBarras;
+  final String nomeProduto;
+  final double precoCusto;
+  final double precoVenda;
+  final int quantidadeEstoque;
+  final bool ativo;
+  final String? descricao;
+  final int estoqueMinimo;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const Product(
+      {required this.id,
+      this.codigoBarras,
+      required this.nomeProduto,
+      required this.precoCusto,
+      required this.precoVenda,
+      required this.quantidadeEstoque,
+      required this.ativo,
+      this.descricao,
+      required this.estoqueMinimo,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || codigoBarras != null) {
+      map['codigo_barras'] = Variable<String>(codigoBarras);
+    }
+    map['nome_produto'] = Variable<String>(nomeProduto);
+    map['preco_custo'] = Variable<double>(precoCusto);
+    map['preco_venda'] = Variable<double>(precoVenda);
+    map['quantidade_estoque'] = Variable<int>(quantidadeEstoque);
+    map['ativo'] = Variable<bool>(ativo);
+    if (!nullToAbsent || descricao != null) {
+      map['descricao'] = Variable<String>(descricao);
+    }
+    map['estoque_minimo'] = Variable<int>(estoqueMinimo);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ProductsCompanion toCompanion(bool nullToAbsent) {
+    return ProductsCompanion(
+      id: Value(id),
+      codigoBarras: codigoBarras == null && nullToAbsent
+          ? const Value.absent()
+          : Value(codigoBarras),
+      nomeProduto: Value(nomeProduto),
+      precoCusto: Value(precoCusto),
+      precoVenda: Value(precoVenda),
+      quantidadeEstoque: Value(quantidadeEstoque),
+      ativo: Value(ativo),
+      descricao: descricao == null && nullToAbsent
+          ? const Value.absent()
+          : Value(descricao),
+      estoqueMinimo: Value(estoqueMinimo),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory Product.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Product(
+      id: serializer.fromJson<String>(json['id']),
+      codigoBarras: serializer.fromJson<String?>(json['codigoBarras']),
+      nomeProduto: serializer.fromJson<String>(json['nomeProduto']),
+      precoCusto: serializer.fromJson<double>(json['precoCusto']),
+      precoVenda: serializer.fromJson<double>(json['precoVenda']),
+      quantidadeEstoque: serializer.fromJson<int>(json['quantidadeEstoque']),
+      ativo: serializer.fromJson<bool>(json['ativo']),
+      descricao: serializer.fromJson<String?>(json['descricao']),
+      estoqueMinimo: serializer.fromJson<int>(json['estoqueMinimo']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'codigoBarras': serializer.toJson<String?>(codigoBarras),
+      'nomeProduto': serializer.toJson<String>(nomeProduto),
+      'precoCusto': serializer.toJson<double>(precoCusto),
+      'precoVenda': serializer.toJson<double>(precoVenda),
+      'quantidadeEstoque': serializer.toJson<int>(quantidadeEstoque),
+      'ativo': serializer.toJson<bool>(ativo),
+      'descricao': serializer.toJson<String?>(descricao),
+      'estoqueMinimo': serializer.toJson<int>(estoqueMinimo),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  Product copyWith(
+          {String? id,
+          Value<String?> codigoBarras = const Value.absent(),
+          String? nomeProduto,
+          double? precoCusto,
+          double? precoVenda,
+          int? quantidadeEstoque,
+          bool? ativo,
+          Value<String?> descricao = const Value.absent(),
+          int? estoqueMinimo,
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      Product(
+        id: id ?? this.id,
+        codigoBarras:
+            codigoBarras.present ? codigoBarras.value : this.codigoBarras,
+        nomeProduto: nomeProduto ?? this.nomeProduto,
+        precoCusto: precoCusto ?? this.precoCusto,
+        precoVenda: precoVenda ?? this.precoVenda,
+        quantidadeEstoque: quantidadeEstoque ?? this.quantidadeEstoque,
+        ativo: ativo ?? this.ativo,
+        descricao: descricao.present ? descricao.value : this.descricao,
+        estoqueMinimo: estoqueMinimo ?? this.estoqueMinimo,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Product(')
+          ..write('id: $id, ')
+          ..write('codigoBarras: $codigoBarras, ')
+          ..write('nomeProduto: $nomeProduto, ')
+          ..write('precoCusto: $precoCusto, ')
+          ..write('precoVenda: $precoVenda, ')
+          ..write('quantidadeEstoque: $quantidadeEstoque, ')
+          ..write('ativo: $ativo, ')
+          ..write('descricao: $descricao, ')
+          ..write('estoqueMinimo: $estoqueMinimo, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      codigoBarras,
+      nomeProduto,
+      precoCusto,
+      precoVenda,
+      quantidadeEstoque,
+      ativo,
+      descricao,
+      estoqueMinimo,
+      createdAt,
+      updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Product &&
+          other.id == this.id &&
+          other.codigoBarras == this.codigoBarras &&
+          other.nomeProduto == this.nomeProduto &&
+          other.precoCusto == this.precoCusto &&
+          other.precoVenda == this.precoVenda &&
+          other.quantidadeEstoque == this.quantidadeEstoque &&
+          other.ativo == this.ativo &&
+          other.descricao == this.descricao &&
+          other.estoqueMinimo == this.estoqueMinimo &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ProductsCompanion extends UpdateCompanion<Product> {
+  final Value<String> id;
+  final Value<String?> codigoBarras;
+  final Value<String> nomeProduto;
+  final Value<double> precoCusto;
+  final Value<double> precoVenda;
+  final Value<int> quantidadeEstoque;
+  final Value<bool> ativo;
+  final Value<String?> descricao;
+  final Value<int> estoqueMinimo;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ProductsCompanion({
+    this.id = const Value.absent(),
+    this.codigoBarras = const Value.absent(),
+    this.nomeProduto = const Value.absent(),
+    this.precoCusto = const Value.absent(),
+    this.precoVenda = const Value.absent(),
+    this.quantidadeEstoque = const Value.absent(),
+    this.ativo = const Value.absent(),
+    this.descricao = const Value.absent(),
+    this.estoqueMinimo = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ProductsCompanion.insert({
+    required String id,
+    this.codigoBarras = const Value.absent(),
+    required String nomeProduto,
+    required double precoCusto,
+    required double precoVenda,
+    this.quantidadeEstoque = const Value.absent(),
+    this.ativo = const Value.absent(),
+    this.descricao = const Value.absent(),
+    this.estoqueMinimo = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        nomeProduto = Value(nomeProduto),
+        precoCusto = Value(precoCusto),
+        precoVenda = Value(precoVenda);
+  static Insertable<Product> custom({
+    Expression<String>? id,
+    Expression<String>? codigoBarras,
+    Expression<String>? nomeProduto,
+    Expression<double>? precoCusto,
+    Expression<double>? precoVenda,
+    Expression<int>? quantidadeEstoque,
+    Expression<bool>? ativo,
+    Expression<String>? descricao,
+    Expression<int>? estoqueMinimo,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (codigoBarras != null) 'codigo_barras': codigoBarras,
+      if (nomeProduto != null) 'nome_produto': nomeProduto,
+      if (precoCusto != null) 'preco_custo': precoCusto,
+      if (precoVenda != null) 'preco_venda': precoVenda,
+      if (quantidadeEstoque != null) 'quantidade_estoque': quantidadeEstoque,
+      if (ativo != null) 'ativo': ativo,
+      if (descricao != null) 'descricao': descricao,
+      if (estoqueMinimo != null) 'estoque_minimo': estoqueMinimo,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ProductsCompanion copyWith(
+      {Value<String>? id,
+      Value<String?>? codigoBarras,
+      Value<String>? nomeProduto,
+      Value<double>? precoCusto,
+      Value<double>? precoVenda,
+      Value<int>? quantidadeEstoque,
+      Value<bool>? ativo,
+      Value<String?>? descricao,
+      Value<int>? estoqueMinimo,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return ProductsCompanion(
+      id: id ?? this.id,
+      codigoBarras: codigoBarras ?? this.codigoBarras,
+      nomeProduto: nomeProduto ?? this.nomeProduto,
+      precoCusto: precoCusto ?? this.precoCusto,
+      precoVenda: precoVenda ?? this.precoVenda,
+      quantidadeEstoque: quantidadeEstoque ?? this.quantidadeEstoque,
+      ativo: ativo ?? this.ativo,
+      descricao: descricao ?? this.descricao,
+      estoqueMinimo: estoqueMinimo ?? this.estoqueMinimo,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (codigoBarras.present) {
+      map['codigo_barras'] = Variable<String>(codigoBarras.value);
+    }
+    if (nomeProduto.present) {
+      map['nome_produto'] = Variable<String>(nomeProduto.value);
+    }
+    if (precoCusto.present) {
+      map['preco_custo'] = Variable<double>(precoCusto.value);
+    }
+    if (precoVenda.present) {
+      map['preco_venda'] = Variable<double>(precoVenda.value);
+    }
+    if (quantidadeEstoque.present) {
+      map['quantidade_estoque'] = Variable<int>(quantidadeEstoque.value);
+    }
+    if (ativo.present) {
+      map['ativo'] = Variable<bool>(ativo.value);
+    }
+    if (descricao.present) {
+      map['descricao'] = Variable<String>(descricao.value);
+    }
+    if (estoqueMinimo.present) {
+      map['estoque_minimo'] = Variable<int>(estoqueMinimo.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ProductsCompanion(')
+          ..write('id: $id, ')
+          ..write('codigoBarras: $codigoBarras, ')
+          ..write('nomeProduto: $nomeProduto, ')
+          ..write('precoCusto: $precoCusto, ')
+          ..write('precoVenda: $precoVenda, ')
+          ..write('quantidadeEstoque: $quantidadeEstoque, ')
+          ..write('ativo: $ativo, ')
+          ..write('descricao: $descricao, ')
+          ..write('estoqueMinimo: $estoqueMinimo, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $CustomersTable customers = $CustomersTable(this);
   late final $CitiesTable cities = $CitiesTable(this);
   late final $ItineraryItemsTable itineraryItems = $ItineraryItemsTable(this);
+  late final $ProductsTable products = $ProductsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [customers, cities, itineraryItems];
+      [customers, cities, itineraryItems, products];
 }

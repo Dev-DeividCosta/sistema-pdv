@@ -14,23 +14,33 @@ class ResponsiveMenuGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      itemCount: items.length,
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: shape == TileShape.square ? 140.0 : 190.0,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        
-        mainAxisExtent: shape == TileShape.rectangle ? 80.0 : null,
-        
-        childAspectRatio: 1.0, 
+    final double maxWidth = shape == TileShape.square ? 450.0 : 600.0;
+
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: items.length,
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: shape == TileShape.square ? 140.0 : 190.0,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              mainAxisExtent: shape == TileShape.rectangle ? 80.0 : null,
+              childAspectRatio: 1.0, 
+            ),
+            itemBuilder: (context, index) {
+              return AppMenuTile(
+                item: items[index],
+                shape: shape,
+              );
+            },
+          ),
+        ),
       ),
-      itemBuilder: (context, index) {
-        return AppMenuTile(
-          item: items[index],
-          shape: shape,
-        );
-      },
     );
   }
 }

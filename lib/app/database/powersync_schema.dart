@@ -27,6 +27,18 @@ const schema = Schema([
     Column.integer('is_deleted'),
     Column.text('created_at'),
   ]),
+  Table('products', [
+    Column.text('codigo_barras'),
+    Column.text('nome_produto'),
+    Column.real('preco_custo'),
+    Column.real('preco_venda'),
+    Column.integer('quantidade_estoque'),
+    Column.integer('ativo'),
+    Column.text('descricao'),
+    Column.integer('estoque_minimo'),
+    Column.text('created_at'),
+    Column.text('updated_at'),
+  ]),
   // Não há autenticação nem backend de sync neste estágio. O roteiro é local.
   // O nome interno separado permite adicionar a tabela sincronizada no futuro
   // sem colisão com esta fonte local.

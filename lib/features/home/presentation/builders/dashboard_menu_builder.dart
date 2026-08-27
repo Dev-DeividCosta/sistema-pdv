@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../product/presentation/pages/product_menu_page.dart';
 import '../../../../core/models/app_menu_item.dart'; 
 import '../../../../core/constants/app_colors.dart';
 import '../../../customer/presentation/pages/customer_menu_page.dart';
@@ -50,7 +51,7 @@ class DashboardBuilderImpl implements DashboardBuilder {
         icon: Icons.inventory_2,
         title: 'Produtos',
         color: const Color(0xFF2980B9),
-        onTap: () {},
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProductMenuPage())),
       ),
       AppMenuItem(
         icon: Icons.credit_card,

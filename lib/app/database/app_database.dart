@@ -4,6 +4,7 @@ import 'package:powersync/powersync.dart' hide Table, Column;
 import 'tables/customer_table.dart';
 import 'tables/city_table.dart';
 import 'tables/itinerary_items_table.dart';
+import 'tables/product_table.dart';
 
 part 'app_database.g.dart';
 
@@ -11,12 +12,13 @@ part 'app_database.g.dart';
   Customers,
   Cities,
   ItineraryItems,
+  Products,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   // --- ADICIONADO: Estratégia de Migração ---
   @override
@@ -29,6 +31,9 @@ class AppDatabase extends _$AppDatabase {
         if (from < 5) {
           // Quando atualizar da versão 4 para a 5, cria a nova tabela!
           await m.createTable(itineraryItems);
+        }
+        if (from < 6) {
+          await m.createTable(products);
         }
       },
     );
