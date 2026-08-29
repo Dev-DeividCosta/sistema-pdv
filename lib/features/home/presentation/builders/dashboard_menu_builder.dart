@@ -5,6 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../customer/presentation/pages/customer_menu_page.dart';
 import '../../../itinerary/presentation/pages/itinerary_cities_page.dart';
 import '../../../city/presentation/pages/city_menu_page.dart';
+import '../../../sale/presentation/pages/sale_menu_page.dart';
 
 abstract class DashboardBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context); 
@@ -29,7 +30,7 @@ class DashboardBuilderImpl implements DashboardBuilder {
       ),
       AppMenuItem(
         icon: Icons.route, // ou Icons.map_outlined
-        title: 'Roteiro de Viagem',
+        title: 'Viagens',
         color: const Color(0xFF00ACC1),
         onTap: () {
           Navigator.push(
@@ -41,12 +42,12 @@ class DashboardBuilderImpl implements DashboardBuilder {
           );
         },
       ),
-      AppMenuItem(
-        icon: Icons.local_shipping,
-        title: 'Fornecedores',
-        color: const Color(0xFFC0392B),
-        onTap: () {},
-      ),
+      // AppMenuItem(
+      //   icon: Icons.local_shipping,
+      //   title: 'Fornecedores',
+      //   color: const Color(0xFFC0392B),
+      //   onTap: () {},
+      // ),
       AppMenuItem(
         icon: Icons.inventory_2,
         title: 'Produtos',
@@ -54,6 +55,15 @@ class DashboardBuilderImpl implements DashboardBuilder {
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProductMenuPage())),
       ),
       AppMenuItem(
+        icon: Icons.point_of_sale,
+        title: 'Vendas',
+        color: AppMenuColors.sale,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SaleMenuPage()),
+        ),
+      ),
+      /* AppMenuItem(
         icon: Icons.credit_card,
         title: 'Formas de\nPagamento',
         color: const Color(0xFFE67E22),
@@ -124,10 +134,10 @@ class DashboardBuilderImpl implements DashboardBuilder {
         title: 'Galeria de\nObservações',
         color: const Color(0xFFF5B041),
         onTap: () {},
-      ),
+      ), */
       AppMenuItem(
         icon: Icons.map,
-        title: 'Cidades de\nAtuação',
+        title: 'Cidades',
         color: AppMenuColors.city,
         onTap: () {
           Navigator.push(
@@ -138,7 +148,7 @@ class DashboardBuilderImpl implements DashboardBuilder {
           );
         },
       ),
-      AppMenuItem(
+      /* AppMenuItem(
         icon: Icons.assignment_return,
         title: 'Reposição por\nFornecedor',
         color: const Color(0xFF2E86C1),
@@ -281,7 +291,7 @@ class DashboardBuilderImpl implements DashboardBuilder {
         title: 'Produtos e Serviços\nPor Período',
         color: const Color(0xFF009688),
         onTap: () {},
-      ),
+      ), */
     ];
   }
 }
