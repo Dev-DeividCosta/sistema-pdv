@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../builders/dashboard_menu_builder.dart';
-import '../widgets/dashboard_app_bar.dart';
-import '../widgets/dashboard_bottom_bar.dart';
 
+import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/menu/responsive_menu_grid.dart';
+import '../../../../core/widgets/navigation/app_navigation_bar.dart'; 
+import '../../../sale/presentation/pages/sale_page.dart';
+import '../widgets/dashboard_app_bar.dart'; 
 
 class DashboardScreen extends StatelessWidget {
   final DashboardBuilder builder;
@@ -18,20 +20,42 @@ class DashboardScreen extends StatelessWidget {
     final menuItems = builder.getMenuItems(context);
 
     return Scaffold(
+      extendBody: true, 
+      
       appBar: const DashboardAppBar(),
       
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ResponsiveMenuGrid(items: menuItems), 
+      // Aplicando apenas a técnica de rolagem do Form, mantendo sua fidelidade visual
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 110.0),
+                child: ResponsiveMenuGrid(items: menuItems), 
+              ),
+            ),
+          );
+        },
       ),
       
-      bottomNavigationBar: const DashboardBottomBar(),
-      
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add_shopping_cart, size: 28),
+      bottomNavigationBar: AppNavigationBar(
+        showBackButton: false,
+        showHomeButton: false, 
+        contextualAction: ContextualActionButton(
+          icon: Icons.add,
+          label: 'Venda',
+          backgroundColor: AppMenuColors.sale, 
+          foregroundColor: Colors.white,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SalePage()),
+            );
+          },
+        ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }

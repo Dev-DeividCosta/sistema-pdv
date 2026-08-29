@@ -3,31 +3,31 @@ import 'package:flutter/material.dart';
 class AppNavigationBar extends StatelessWidget {
   final Widget? contextualAction;
   final Alignment alignment;
+  final bool showBackButton;
+  final bool showHomeButton;
 
   const AppNavigationBar({
     super.key,
     this.contextualAction,
     this.alignment = Alignment.bottomCenter,
+    this.showBackButton = true,
+    this.showHomeButton = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final bool hasAction = contextualAction != null;
-    final bool showHome = hasAction ? screenWidth >= 260 : true;
-    final bool showBack = hasAction ? screenWidth >= 340 : screenWidth >= 240;
+    final bool showHome = showHomeButton && (hasAction ? screenWidth >= 260 : true);
+    final bool showBack = showBackButton && (hasAction ? screenWidth >= 340 : screenWidth >= 240);
 
     return SafeArea(
       top: false,
       child: Align(
         alignment: alignment,
-        // O bottomNavigationBar pode receber constraints maiores que o
-        // conteúdo. Sem fatores de tamanho, o Align expande e sua área
-        // transparente pode capturar os toques da tela inteira.
         widthFactor: 1.0,
         heightFactor: 1.0,
         child: Padding(
-
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),

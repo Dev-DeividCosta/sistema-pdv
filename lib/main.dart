@@ -25,6 +25,7 @@ void main() async {
   await powerSyncDb.initialize();
 
   final bancoDeDados = createDatabase(powerSyncDb);
+  await bancoDeDados.ensureSalesTables();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

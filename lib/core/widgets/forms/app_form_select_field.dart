@@ -4,11 +4,13 @@ class AppFormSelectAction {
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
+  final Color? backgroundColor;
 
   const AppFormSelectAction({
     required this.label,
     required this.icon,
     required this.onPressed,
+    this.backgroundColor,
   });
 }
 
@@ -22,6 +24,7 @@ class AppFormSelectField<T> extends StatelessWidget {
   final VoidCallback? onReadOnlyTap;
   final String? sheetTitle;
   final AppFormSelectAction? action;
+  final Color? primaryColor;
 
   const AppFormSelectField({
     super.key,
@@ -34,9 +37,12 @@ class AppFormSelectField<T> extends StatelessWidget {
     this.onReadOnlyTap,
     this.sheetTitle,
     this.action,
+    this.primaryColor,
   });
 
   void _showBottomSheet(BuildContext context, FormFieldState<T> fieldState) {
+    final activeColor = primaryColor ?? const Color(0xFFB71C1C);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -57,8 +63,8 @@ class AppFormSelectField<T> extends StatelessWidget {
                 width: 40, height: 4, margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(color: Colors.white30, borderRadius: BorderRadius.circular(2)),
               ),
-              Text(sheetTitle ?? 'Selecione $label', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                            const Divider(color: Colors.white12),
+              Text(sheetTitle ?? label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+              const Divider(color: Colors.white12),
               if (action != null) ...[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -73,8 +79,11 @@ class AppFormSelectField<T> extends StatelessWidget {
                       label: Text(action!.label),
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size.fromHeight(46),
+                        backgroundColor: action!.backgroundColor,
                         foregroundColor: Colors.white,
-                        side: BorderSide(color: Colors.white.withValues(alpha: 0.35)),
+                        side: action!.backgroundColor != null
+                            ? BorderSide.none
+                            : BorderSide(color: Colors.white.withValues(alpha: 0.35)),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -84,15 +93,14 @@ class AppFormSelectField<T> extends StatelessWidget {
                 ),
               ],
               Expanded(
-
                 child: ListView.builder(
                   itemCount: options.length,
                   itemBuilder: (context, index) {
                     final entry = options.entries.elementAt(index);
                     final isSelected = entry.key == value;
                     return ListTile(
-                      title: Text(entry.value, style: TextStyle(color: isSelected ? const Color(0xFFB71C1C) : Colors.white)),
-                      trailing: isSelected ? const Icon(Icons.check_circle, color: Color(0xFFB71C1C)) : null,
+                      title: Text(entry.value, style: TextStyle(color: isSelected ? activeColor : Colors.white)),
+                      trailing: isSelected ? Icon(Icons.check_circle, color: activeColor) : null,
                       onTap: () {
                         onChanged?.call(entry.key);
                         fieldState.didChange(entry.key);
@@ -111,34 +119,30 @@ class AppFormSelectField<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedText = value != null ? options[value] : 'Selecione...';
+    final selectedText = value != null ? options[value] : '';
 
     return FormField<T>(
       initialValue: value,
       validator: validator,
       builder: (fieldState) {
-        // Usamos o TextFormField como base (mesmo sendo um seletor) 
-        // para garantir o mesmo layout e comportamento do TextField normal.
-        return TextFormField(
-          readOnly: true, // O input é readOnly, o modal controla o valor
-          onTap: readOnly ? onReadOnlyTap : () => _showBottomSheet(context, fieldState),
+        return TextField(
           controller: TextEditingController(text: selectedText),
-          style: TextStyle(
-            color: readOnly ? Colors.white70 : Colors.white,
-          ),
+          readOnly: true,
+          onTap: readOnly ? onReadOnlyTap : () => _showBottomSheet(context, fieldState),
+          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             labelText: label,
-            labelStyle: const TextStyle(color: Colors.white54),
+            labelStyle: const TextStyle(color: Colors.white70),
             filled: true,
             fillColor: readOnly ? Colors.white.withValues(alpha: 0.05) : const Color(0xFF424242),
             errorText: fieldState.errorText,
-            suffixIcon: Icon(
-              readOnly ? Icons.lock_outline : Icons.arrow_drop_down,
-              color: Colors.white54,
-            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
+            ),
+            suffixIcon: Icon(
+              readOnly ? Icons.lock_outline : Icons.arrow_drop_down,
+              color: Colors.white54,
             ),
           ),
         );
