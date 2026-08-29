@@ -18,7 +18,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   // --- ADICIONADO: Estratégia de Migração ---
   @override
@@ -26,6 +26,7 @@ class AppDatabase extends _$AppDatabase {
     return MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
+        await _createSalesTables();
       },
       onUpgrade: (Migrator m, int from, int to) async {
         if (from < 5) {
@@ -35,8 +36,45 @@ class AppDatabase extends _$AppDatabase {
         if (from < 6) {
           await m.createTable(products);
         }
+        if (from < 7) {
+          await _createSalesTables();
+        }
       },
     );
+  }
+
+  /// As vendas permanecem locais neste MVP, mas são criadas no mesmo banco
+  /// para que o fechamento transacional e o histórico sobrevivam ao reinício.
+  /// Garante as tabelas de vendas também quando o arquivo SQLite já existia
+  /// antes da migração 7 ou quando a migração não foi executada pelo executor.
+  Future<void> ensureSalesTables() => _createSalesTables();
+
+  Future<void> _createSalesTables() async {
+    await customStatement('''
+      CREATE TABLE IF NOT EXISTS sales (
+        id TEXT NOT NULL PRIMARY KEY,
+        customer_id TEXT,
+        status TEXT NOT NULL DEFAULT 'completed',
+        payment_method TEXT,
+        subtotal_centavos INTEGER NOT NULL DEFAULT 0,
+        discount_centavos INTEGER NOT NULL DEFAULT 0,
+        total_centavos INTEGER NOT NULL DEFAULT 0,
+        sold_at TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        is_deleted INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+    await customStatement('''
+      CREATE TABLE IF NOT EXISTS sale_items (
+        id TEXT NOT NULL PRIMARY KEY,
+        sale_id TEXT NOT NULL,
+        product_id TEXT NOT NULL,
+        product_nome TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        unit_price_centavos INTEGER NOT NULL,
+        total_centavos INTEGER NOT NULL
+      )
+    ''');
   }
 }
 
