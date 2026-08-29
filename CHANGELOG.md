@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.10.0...v1.11.0) (2026-08-29)
+
+
+### Features
+
+* **sale:** implementa modulo de vendas ([#28](https://github.com/Dev-DeividCosta/sistema-pdv/issues/28)) ([f9e6bbd](https://github.com/Dev-DeividCosta/sistema-pdv/commit/f9e6bbdce6a985b85a70c8f5ab64dc468f1dac9d))
+
 # [1.10.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.9.0...v1.10.0) (2026-08-27)
 
 
