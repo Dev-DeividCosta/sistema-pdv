@@ -54,3 +54,7 @@ node_modules
 **/flutter/generated_plugin_registrant.*
 **/flutter/generated_plugins.cmake
 **/Flutter/GeneratedPluginRegistrant.swift
+
+# Environment variables
+.env
+*.env
