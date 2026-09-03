@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.11.0...v1.12.0) (2026-09-03)
+
+
+### Features
+
+* **employee:** implementa gerenciamento de funcionarios ([#30](https://github.com/Dev-DeividCosta/sistema-pdv/issues/30)) ([c711029](https://github.com/Dev-DeividCosta/sistema-pdv/commit/c7110290c66f0f4cada3d481dc3bdb568365a2d0))
+
 # [1.11.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.10.0...v1.11.0) (2026-08-29)
 
 
