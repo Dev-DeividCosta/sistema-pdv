@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.12.0...v1.13.0) (2026-09-03)
+
+
+### Features
+
+* **payment-method:** implementa gerenciamento de formas de pagamento ([#32](https://github.com/Dev-DeividCosta/sistema-pdv/issues/32)) ([33d70bd](https://github.com/Dev-DeividCosta/sistema-pdv/commit/33d70bd891f60af08093a34e8f167cc6ac08b5a4))
+
 # [1.12.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.11.0...v1.12.0) (2026-09-03)
 
 
