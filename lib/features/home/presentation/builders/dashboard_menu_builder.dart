@@ -7,6 +7,7 @@ import '../../../itinerary/presentation/pages/itinerary_cities_page.dart';
 import '../../../city/presentation/pages/city_menu_page.dart';
 import '../../../sale/presentation/pages/sale_menu_page.dart';
 import '../../../employee/presentation/pages/employee_menu_page.dart';
+import '../../../payment_method/presentation/pages/payment_method_menu_page.dart';
 
 abstract class DashboardBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context); 
@@ -66,12 +67,28 @@ class DashboardBuilderImpl implements DashboardBuilder {
           MaterialPageRoute(builder: (_) => const SaleMenuPage()),
         ),
       ),
-      // /* AppMenuItem(
-      //   icon: Icons.credit_card,
-      //   title: 'Formas de\nPagamento',
-      //   color: const Color(0xFFE67E22),
-      //   onTap: () {},
-      // ),
+      AppMenuItem(
+        icon: Icons.map,
+        title: 'Cidades',
+        color: AppMenuColors.city,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CityMenuPage(),
+            ),
+          );
+        },
+      ),
+      AppMenuItem(
+        icon: Icons.credit_card,
+        title: 'Formas de Pagamento',
+        color: AppMenuColors.paymentMethods,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const PaymentMethodMenuPage()),
+        ),
+      ),
       // AppMenuItem(
       //   icon: Icons.straighten,
       //   title: 'Medidas',
@@ -138,19 +155,6 @@ class DashboardBuilderImpl implements DashboardBuilder {
       //   color: const Color(0xFFF5B041),
       //   onTap: () {},
       // ), */
-      AppMenuItem(
-        icon: Icons.map,
-        title: 'Cidades',
-        color: AppMenuColors.city,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const CityMenuPage(),
-            ),
-          );
-        },
-      ),
       // /* AppMenuItem(
       //   icon: Icons.assignment_return,
       //   title: 'Reposição por\nFornecedor',
