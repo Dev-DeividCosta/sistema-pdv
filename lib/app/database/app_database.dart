@@ -49,6 +49,18 @@ class AppDatabase extends _$AppDatabase {
   /// antes da migração 7 ou quando a migração não foi executada pelo executor.
   Future<void> ensureSalesTables() => _createSalesTables();
 
+  Future<void> ensurePaymentMethodsTable() async {
+    await customStatement('''
+      CREATE TABLE IF NOT EXISTS payment_methods (
+        id TEXT NOT NULL PRIMARY KEY,
+        nome TEXT NOT NULL,
+        is_ativo INTEGER NOT NULL DEFAULT 1,
+        is_deleted INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL
+      )
+    ''');
+  }
+
   Future<void> ensureEmployeesTable() async {
     await customStatement('''
       CREATE TABLE IF NOT EXISTS employees (
