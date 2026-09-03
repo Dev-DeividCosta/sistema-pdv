@@ -35,6 +35,58 @@ class CpfInputFormatter extends TextInputFormatter {
   }
 }
 
+class CnpjInputFormatter extends TextInputFormatter {
+  static String format(String text) {
+    final digitsOnly = text.replaceAll(RegExp(r'\D'), '');
+    final limited = digitsOnly.length > 14 ? digitsOnly.substring(0, 14) : digitsOnly;
+    final buffer = StringBuffer();
+    for (int i = 0; i < limited.length; i++) {
+      if (i == 2 || i == 5) {
+        buffer.write('.');
+      } else if (i == 8) {
+        buffer.write('/');
+      } else if (i == 12) {
+        buffer.write('-');
+      }
+      buffer.write(limited[i]);
+    }
+    return buffer.toString();
+  }
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final formatted = format(newValue.text);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
+class TelefoneInputFormatter extends TextInputFormatter {
+  static String format(String text) {
+    final digitsOnly = text.replaceAll(RegExp(r'\D'), '');
+    final limited = digitsOnly.length > 11 ? digitsOnly.substring(0, 11) : digitsOnly;
+    if (limited.length <= 10) return TelefoneFixoInputFormatter.format(limited);
+    return CelularInputFormatter.format(limited);
+  }
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final formatted = format(newValue.text);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
 class CepInputFormatter extends TextInputFormatter {
   static String format(String text) {
     final digitsOnly = text.replaceAll(RegExp(r'\D'), '');

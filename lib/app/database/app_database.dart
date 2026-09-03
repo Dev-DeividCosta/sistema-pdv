@@ -75,6 +75,29 @@ class AppDatabase extends _$AppDatabase {
     ''');
   }
 
+  Future<void> ensureCompanyTable() async {
+    await customStatement('''
+      CREATE TABLE IF NOT EXISTS company (
+        id TEXT NOT NULL PRIMARY KEY,
+        razao_social TEXT NOT NULL,
+        nome_fantasia TEXT,
+        cnpj TEXT,
+        telefone TEXT,
+        email TEXT,
+        endereco TEXT,
+        numero TEXT,
+        complemento TEXT,
+        bairro TEXT,
+        cidade TEXT,
+        uf TEXT,
+        cep TEXT,
+        is_ativo INTEGER NOT NULL DEFAULT 1,
+        is_deleted INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL
+      )
+    ''');
+  }
+
   Future<void> _createSalesTables() async {
     await customStatement('''
       CREATE TABLE IF NOT EXISTS sales (

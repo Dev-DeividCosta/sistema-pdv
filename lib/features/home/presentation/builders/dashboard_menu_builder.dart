@@ -8,6 +8,8 @@ import '../../../city/presentation/pages/city_menu_page.dart';
 import '../../../sale/presentation/pages/sale_menu_page.dart';
 import '../../../employee/presentation/pages/employee_menu_page.dart';
 import '../../../payment_method/presentation/pages/payment_method_menu_page.dart';
+import '../../../company/presentation/pages/company_form_page.dart';
+import '../../../../core/widgets/forms/form_mode.dart';
 
 abstract class DashboardBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context); 
@@ -89,6 +91,17 @@ class DashboardBuilderImpl implements DashboardBuilder {
           MaterialPageRoute(builder: (_) => const PaymentMethodMenuPage()),
         ),
       ),
+                  AppMenuItem(
+        icon: Icons.business,
+        title: 'Dados empresariais',
+        color: AppMenuColors.company,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const CompanyFormPage(mode: AppFormMode.view),
+          ),
+        ),
+      ),
       // AppMenuItem(
       //   icon: Icons.straighten,
       //   title: 'Medidas',
@@ -129,12 +142,6 @@ class DashboardBuilderImpl implements DashboardBuilder {
       //   icon: Icons.remove_shopping_cart,
       //   title: 'Baixar Estoque\nManualmente',
       //   color: const Color(0xFF1976D2),
-      //   onTap: () {},
-      // ),
-      // AppMenuItem(
-      //   icon: Icons.business,
-      //   title: 'Dados da Minha\nEmpresa',
-      //   color: const Color(0xFF00897B),
       //   onTap: () {},
       // ),
       // AppMenuItem(

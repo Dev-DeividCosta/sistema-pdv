@@ -26,6 +26,7 @@ void main() async {
 
   final bancoDeDados = createDatabase(powerSyncDb);
   await bancoDeDados.ensureSalesTables();
+  await bancoDeDados.ensurePaymentMethodsTable();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
