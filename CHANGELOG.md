@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.13.0...v1.14.0) (2026-09-03)
+
+
+### Features
+
+* **company:** implementa gerenciamento de empresa ([#34](https://github.com/Dev-DeividCosta/sistema-pdv/issues/34)) ([9e985ad](https://github.com/Dev-DeividCosta/sistema-pdv/commit/9e985ad5758c08e13612a9d8a5a72e011b3fb236))
+
 # [1.13.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.12.0...v1.13.0) (2026-09-03)
 
 
