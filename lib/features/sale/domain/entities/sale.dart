@@ -53,7 +53,9 @@ class SaleItemDraft {
 class SaleDraft {
   final String? id;
   final String? customerId;
+  final String? employeeId;
   final String? paymentMethod;
+  final int installments;
   final int discountCentavos;
   final DateTime soldAt;
   final List<SaleItemDraft> items;
@@ -61,7 +63,9 @@ class SaleDraft {
   const SaleDraft({
     this.id,
     this.customerId,
+    this.employeeId,
     this.paymentMethod,
+    this.installments = 1,
     this.discountCentavos = 0,
     required this.soldAt,
     this.items = const [],
@@ -96,8 +100,10 @@ class SaleItem {
 class SaleEntity {
   final String id;
   final String? customerId;
+  final String? employeeId;
   final String status;
   final String? paymentMethod;
+  final int installments;
   final int subtotalCentavos;
   final int discountCentavos;
   final int totalCentavos;
@@ -108,8 +114,10 @@ class SaleEntity {
   const SaleEntity({
     required this.id,
     this.customerId,
+    this.employeeId,
     required this.status,
     this.paymentMethod,
+    required this.installments,
     required this.subtotalCentavos,
     required this.discountCentavos,
     required this.totalCentavos,

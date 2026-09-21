@@ -103,8 +103,10 @@ class AppDatabase extends _$AppDatabase {
       CREATE TABLE IF NOT EXISTS sales (
         id TEXT NOT NULL PRIMARY KEY,
         customer_id TEXT,
+        employee_id TEXT,
         status TEXT NOT NULL DEFAULT 'completed',
         payment_method TEXT,
+        installments INTEGER NOT NULL DEFAULT 1,
         subtotal_centavos INTEGER NOT NULL DEFAULT 0,
         discount_centavos INTEGER NOT NULL DEFAULT 0,
         total_centavos INTEGER NOT NULL DEFAULT 0,
@@ -113,6 +115,16 @@ class AppDatabase extends _$AppDatabase {
         is_deleted INTEGER NOT NULL DEFAULT 0
       )
     ''');
+    try {
+      await customStatement('ALTER TABLE sales ADD COLUMN employee_id TEXT');
+    } catch (_) {
+      // Coluna já existe em bancos criados com a versão atual.
+    }
+    try {
+      await customStatement('ALTER TABLE sales ADD COLUMN installments INTEGER NOT NULL DEFAULT 1');
+    } catch (_) {
+      // Coluna já existe em bancos criados com a versão atual.
+    }
     await customStatement('''
       CREATE TABLE IF NOT EXISTS sale_items (
         id TEXT NOT NULL PRIMARY KEY,

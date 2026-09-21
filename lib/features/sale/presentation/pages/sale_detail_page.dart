@@ -124,6 +124,7 @@ class SaleDetailPage extends ConsumerWidget {
           if (sale.customerId != null && customerName == null)
             _metadata('ID do cliente', sale.customerId!),
           _metadata('Forma de pagamento', sale.paymentMethod ?? 'Não informada'),
+          _metadata('Parcelas', '${sale.installments}x'),
         ],
       ),
     );
