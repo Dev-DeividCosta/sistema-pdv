@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.14.0...v1.15.0) (2026-09-21)
+
+
+### Features
+
+* **sale:** adiciona parcelas e comprovante ([#36](https://github.com/Dev-DeividCosta/sistema-pdv/issues/36)) ([61f98c9](https://github.com/Dev-DeividCosta/sistema-pdv/commit/61f98c92376d2c7b597a1900aca5e7c89f7c1f34))
+
 # [1.14.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.13.0...v1.14.0) (2026-09-03)
 
 
