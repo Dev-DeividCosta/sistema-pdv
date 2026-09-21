@@ -47,8 +47,10 @@ class SaleItemModel {
 class SaleModel {
   final String id;
   final String? customerId;
+  final String? employeeId;
   final String status;
   final String? paymentMethod;
+  final int installments;
   final int subtotalCentavos;
   final int discountCentavos;
   final int totalCentavos;
@@ -59,8 +61,10 @@ class SaleModel {
   const SaleModel({
     required this.id,
     this.customerId,
+    this.employeeId,
     required this.status,
     this.paymentMethod,
+    required this.installments,
     required this.subtotalCentavos,
     required this.discountCentavos,
     required this.totalCentavos,
@@ -74,8 +78,10 @@ class SaleModel {
     return SaleModel(
       id: saleId,
       customerId: draft.customerId,
+      employeeId: draft.employeeId,
       status: 'completed',
       paymentMethod: draft.paymentMethod,
+      installments: draft.installments,
       subtotalCentavos: draft.subtotalCentavos,
       discountCentavos: draft.discountCentavos,
       totalCentavos: draft.totalCentavos,
@@ -91,8 +97,10 @@ class SaleModel {
     return SaleEntity(
       id: id,
       customerId: customerId,
+      employeeId: employeeId,
       status: status,
       paymentMethod: paymentMethod,
+      installments: installments,
       subtotalCentavos: subtotalCentavos,
       discountCentavos: discountCentavos,
       totalCentavos: totalCentavos,

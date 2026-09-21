@@ -16,6 +16,9 @@ class CompleteSaleUseCase {
     if (draft.items.any((item) => item.unitPriceCentavos < 0)) {
       throw Exception('O preço dos itens não pode ser negativo.');
     }
+    if (draft.installments <= 0) {
+      throw Exception('A quantidade de parcelas deve ser maior que zero.');
+    }
     if (draft.discountCentavos < 0) {
       throw Exception('O desconto não pode ser negativo.');
     }

@@ -244,6 +244,8 @@ class _SaleHistoryPageState extends ConsumerState<SaleHistoryPage> {
                   _infoChip(Icons.calendar_today, _formatDateTime(sale.soldAt)),
                   const SizedBox(width: 12),
                   _infoChip(Icons.payment, sale.paymentMethod ?? 'N/A'),
+                  const SizedBox(width: 12),
+                  _infoChip(Icons.format_list_numbered, '${sale.installments}x'),
                 ],
               ),
               const SizedBox(height: 8),

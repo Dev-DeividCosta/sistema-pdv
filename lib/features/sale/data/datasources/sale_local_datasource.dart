@@ -45,7 +45,7 @@ class SaleLocalDataSource {
     final rows = await _db
         .customSelect(
           '''
-          SELECT id, customer_id, status, payment_method,
+          SELECT id, customer_id, employee_id, status, payment_method, installments,
                  subtotal_centavos, discount_centavos, total_centavos,
                  sold_at, created_at
           FROM sales
@@ -62,8 +62,10 @@ class SaleLocalDataSource {
         SaleModel(
           id: saleId,
           customerId: row.readNullable<String>('customer_id'),
+          employeeId: row.readNullable<String>('employee_id'),
           status: row.read<String>('status'),
           paymentMethod: row.readNullable<String>('payment_method'),
+          installments: row.read<int>('installments'),
           subtotalCentavos: row.read<int>('subtotal_centavos'),
           discountCentavos: row.read<int>('discount_centavos'),
           totalCentavos: row.read<int>('total_centavos'),
@@ -81,7 +83,7 @@ class SaleLocalDataSource {
     final rows = await _db
         .customSelect(
           '''
-          SELECT id, customer_id, status, payment_method,
+          SELECT id, customer_id, employee_id, status, payment_method, installments,
                  subtotal_centavos, discount_centavos, total_centavos,
                  sold_at, created_at
           FROM sales
@@ -100,8 +102,10 @@ class SaleLocalDataSource {
     return SaleModel(
       id: row.read<String>('id'),
       customerId: row.readNullable<String>('customer_id'),
+      employeeId: row.readNullable<String>('employee_id'),
       status: row.read<String>('status'),
       paymentMethod: row.readNullable<String>('payment_method'),
+      installments: row.read<int>('installments'),
       subtotalCentavos: row.read<int>('subtotal_centavos'),
       discountCentavos: row.read<int>('discount_centavos'),
       totalCentavos: row.read<int>('total_centavos'),
@@ -146,15 +150,17 @@ class SaleLocalDataSource {
       await _db.customInsert(
         '''
         INSERT INTO sales (
-          id, customer_id, status, payment_method, subtotal_centavos,
+          id, customer_id, employee_id, status, payment_method, installments, subtotal_centavos,
           discount_centavos, total_centavos, sold_at, created_at, is_deleted
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
         ''',
         variables: [
           Variable<String>(sale.id),
           Variable<String>(sale.customerId),
+          Variable<String>(sale.employeeId),
           Variable<String>(sale.status),
           Variable<String>(sale.paymentMethod),
+          Variable<int>(sale.installments),
           Variable<int>(sale.subtotalCentavos),
           Variable<int>(sale.discountCentavos),
           Variable<int>(sale.totalCentavos),
