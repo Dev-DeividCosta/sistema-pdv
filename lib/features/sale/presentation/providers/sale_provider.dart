@@ -39,7 +39,6 @@ class SaleCartState {
   final List<SaleItemDraft> items;
   final String? customerId;
   final String? employeeId;
-  final String? paymentMethod;
   final int installments;
   /// Valor de desconto informado pelo usuário, preservado enquanto o carrinho muda.
   final int requestedDiscountCentavos;
@@ -48,7 +47,6 @@ class SaleCartState {
     this.items = const [],
     this.customerId,
     this.employeeId,
-    this.paymentMethod,
     this.installments = 1,
     this.requestedDiscountCentavos = 0,
   });
@@ -68,7 +66,6 @@ class SaleCartState {
     return SaleDraft(
       customerId: customerId,
       employeeId: employeeId,
-      paymentMethod: paymentMethod,
       installments: installments,
       discountCentavos: discountCentavos,
       soldAt: DateTime.now().toUtc(),
@@ -97,7 +94,6 @@ class SaleCartNotifier extends AutoDisposeNotifier<SaleCartState> {
         ],
         customerId: state.customerId,
         employeeId: state.employeeId,
-        paymentMethod: state.paymentMethod,
         installments: state.installments,
         requestedDiscountCentavos: state.requestedDiscountCentavos,
       );
@@ -140,7 +136,6 @@ class SaleCartNotifier extends AutoDisposeNotifier<SaleCartState> {
       items: state.items,
       customerId: state.customerId,
       employeeId: state.employeeId,
-      paymentMethod: state.paymentMethod,
       installments: installments,
       requestedDiscountCentavos: state.requestedDiscountCentavos,
     );
@@ -151,7 +146,6 @@ class SaleCartNotifier extends AutoDisposeNotifier<SaleCartState> {
       items: state.items,
       customerId: state.customerId,
       employeeId: state.employeeId,
-      paymentMethod: state.paymentMethod,
       installments: state.installments,
       requestedDiscountCentavos: discountCentavos < 0 ? 0 : discountCentavos,
     );
@@ -162,7 +156,6 @@ class SaleCartNotifier extends AutoDisposeNotifier<SaleCartState> {
       items: state.items,
       customerId: customerId,
       employeeId: state.employeeId,
-      paymentMethod: state.paymentMethod,
       installments: state.installments,
       requestedDiscountCentavos: state.requestedDiscountCentavos,
     );
@@ -173,18 +166,6 @@ class SaleCartNotifier extends AutoDisposeNotifier<SaleCartState> {
       items: state.items,
       customerId: state.customerId,
       employeeId: employeeId,
-      paymentMethod: state.paymentMethod,
-      installments: state.installments,
-      requestedDiscountCentavos: state.requestedDiscountCentavos,
-    );
-  }
-
-  void setPaymentMethod(String? paymentMethod) {
-    state = SaleCartState(
-      items: state.items,
-      customerId: state.customerId,
-      employeeId: state.employeeId,
-      paymentMethod: paymentMethod,
       installments: state.installments,
       requestedDiscountCentavos: state.requestedDiscountCentavos,
     );
@@ -199,7 +180,6 @@ class SaleCartNotifier extends AutoDisposeNotifier<SaleCartState> {
       items: List<SaleItemDraft>.unmodifiable(items),
       customerId: state.customerId,
       employeeId: state.employeeId,
-      paymentMethod: state.paymentMethod,
       installments: state.installments,
       requestedDiscountCentavos: state.requestedDiscountCentavos,
     );

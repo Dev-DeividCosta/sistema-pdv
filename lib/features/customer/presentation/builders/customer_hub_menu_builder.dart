@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/models/app_menu_item.dart';
 import '../../domain/entities/customer.dart';
 import '../pages/customer_form_page.dart';
+import '../pages/customer_purchase_history_page.dart';
 import '../../../../core/widgets/forms/form_mode.dart';
 
 abstract class CustomerHubMenuBuilder {
@@ -88,6 +89,19 @@ class CustomerHubMenuBuilderImpl implements CustomerHubMenuBuilder {
                 customer: customer,
                 mode: AppFormMode.edit,
               ),
+            ),
+          );
+        },
+      ),
+      AppMenuItem(
+        title: 'Histórico de Compras',
+        icon: Icons.shopping_bag_outlined,
+        color: const Color(0xFF2D4B68),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CustomerPurchaseHistoryPage(customer: customer),
             ),
           );
         },

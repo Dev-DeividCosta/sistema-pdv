@@ -18,7 +18,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 9;
 
   // --- ADICIONADO: Estratégia de Migração ---
   @override
@@ -38,6 +38,12 @@ class AppDatabase extends _$AppDatabase {
         }
         if (from < 7) {
           await _createSalesTables();
+        }
+        if (from < 8) {
+          await _createPaymentTables();
+        }
+        if (from < 9) {
+          await _createPaymentTables();
         }
       },
     );
@@ -136,6 +142,30 @@ class AppDatabase extends _$AppDatabase {
         total_centavos INTEGER NOT NULL
       )
     ''');
+    await _createPaymentTables();
+  }
+
+  Future<void> ensurePaymentTables() => _createPaymentTables();
+
+  Future<void> _createPaymentTables() async {
+    await ensurePaymentMethodsTable();
+    await customStatement('''
+      CREATE TABLE IF NOT EXISTS sale_payments (
+        id TEXT NOT NULL PRIMARY KEY,
+        sale_id TEXT NOT NULL,
+        employee_id TEXT,
+        payment_method_id TEXT,
+        amount_centavos INTEGER NOT NULL,
+        payment_status TEXT NOT NULL DEFAULT 'pagamento_concluido',
+        paid_at TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+    try {
+      await customStatement('ALTER TABLE sale_payments ADD COLUMN payment_method_id TEXT');
+    } catch (_) {
+      // Coluna já existe em bancos criados com a versão atual ou migrados.
+    }
   }
 }
 

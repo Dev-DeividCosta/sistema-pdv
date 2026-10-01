@@ -150,16 +150,15 @@ class SaleLocalDataSource {
       await _db.customInsert(
         '''
         INSERT INTO sales (
-          id, customer_id, employee_id, status, payment_method, installments, subtotal_centavos,
+          id, customer_id, employee_id, status, installments, subtotal_centavos,
           discount_centavos, total_centavos, sold_at, created_at, is_deleted
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
         ''',
         variables: [
           Variable<String>(sale.id),
           Variable<String>(sale.customerId),
           Variable<String>(sale.employeeId),
           Variable<String>(sale.status),
-          Variable<String>(sale.paymentMethod),
           Variable<int>(sale.installments),
           Variable<int>(sale.subtotalCentavos),
           Variable<int>(sale.discountCentavos),
