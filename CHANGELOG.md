@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.15.0...v1.16.0) (2026-10-01)
+
+
+### Features
+
+* **payment:** implementa pagamentos e comprovantes ([#38](https://github.com/Dev-DeividCosta/sistema-pdv/issues/38)) ([fd366c6](https://github.com/Dev-DeividCosta/sistema-pdv/commit/fd366c6b2f6e8dd743e7878c9b5675939efa5316))
+
 # [1.15.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.14.0...v1.15.0) (2026-09-21)
 
 
