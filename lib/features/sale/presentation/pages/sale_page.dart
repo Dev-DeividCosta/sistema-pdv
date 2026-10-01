@@ -16,10 +16,8 @@ import '../../../employee/presentation/providers/employee_provider.dart';
 import '../../../company/domain/entities/company.dart';
 import '../../../company/presentation/providers/company_provider.dart';
 import 'sale_completed_page.dart';
+import 'sale_detail_page.dart';
 import '../../../product/presentation/pages/product_form_page.dart';
-import '../../../payment_method/domain/entities/payment_method.dart';
-import '../../../payment_method/presentation/pages/payment_method_form_page.dart';
-import '../../../payment_method/presentation/providers/payment_method_provider.dart';
 
 import '../../domain/entities/sale.dart';
 import '../providers/sale_provider.dart';
@@ -36,7 +34,7 @@ class SalePage extends ConsumerStatefulWidget {
 
 class _SalePageState extends ConsumerState<SalePage> {
   final _discountController = TextEditingController();
-  final _installmentsController = TextEditingController(text: '1');
+  final _installmentsController = TextEditingController();
   SaleDraft? _pendingDraft;
   CustomerEntity? _pendingCustomer;
   EmployeeEntity? _pendingEmployee;
@@ -59,6 +57,17 @@ class _SalePageState extends ConsumerState<SalePage> {
           _installmentsController.text = '1';
           final draft = _pendingDraft;
           if (draft == null || !mounted) return;
+
+          final saleId = draft.id;
+          if (saleId != null) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => SaleDetailPage(saleId: saleId),
+              ),
+            );
+            return;
+          }
+
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (_) => SaleCompletedPage(
@@ -86,7 +95,6 @@ class _SalePageState extends ConsumerState<SalePage> {
     final customersAsync = ref.watch(customersStreamProvider);
     final employeesAsync = ref.watch(employeesStreamProvider);
     final companyAsync = ref.watch(companyProvider);
-    final paymentMethodsAsync = ref.watch(paymentMethodsStreamProvider);
 
     return Scaffold(
       extendBody: true,
@@ -115,19 +123,15 @@ class _SalePageState extends ConsumerState<SalePage> {
           color: Colors.redAccent,
         ),
         data: (products) => customersAsync.when(
-          loading: () => _buildContent(products, const [], const [], const [], null),
-          error: (_, _) => _buildContent(products, const [], const [], const [], null),
+          loading: () => _buildContent(products, const [], const [], null),
+          error: (_, _) => _buildContent(products, const [], const [], null),
           data: (customers) => employeesAsync.when(
-            loading: () => _buildContent(products, customers, const [], const [], null),
-            error: (_, _) => _buildContent(products, customers, const [], const [], null),
-            data: (employees) => paymentMethodsAsync.when(
-              loading: () => _buildContent(products, customers, employees, const [], null),
-              error: (_, _) => _buildContent(products, customers, employees, const [], null),
-              data: (paymentMethods) => companyAsync.when(
-                loading: () => _buildContent(products, customers, employees, paymentMethods, null),
-                error: (_, _) => _buildContent(products, customers, employees, paymentMethods, null),
-                data: (company) => _buildContent(products, customers, employees, paymentMethods, company),
-              ),
+            loading: () => _buildContent(products, customers, const [], null),
+            error: (_, _) => _buildContent(products, customers, const [], null),
+            data: (employees) => companyAsync.when(
+              loading: () => _buildContent(products, customers, employees, null),
+              error: (_, _) => _buildContent(products, customers, employees, null),
+              data: (company) => _buildContent(products, customers, employees, company),
             ),
           ),
         ),
@@ -139,7 +143,6 @@ class _SalePageState extends ConsumerState<SalePage> {
     List<SaleProduct> products,
     List<CustomerEntity> customers,
     List<EmployeeEntity> employees,
-    List<PaymentMethodEntity> paymentMethods,
     CompanyEntity? company,
   ) {
     final cart = ref.watch(saleCartProvider);
@@ -176,8 +179,6 @@ class _SalePageState extends ConsumerState<SalePage> {
                   _buildCustomerSelector(customers, cart.customerId),
                   const SizedBox(height: 12),
                   _buildEmployeeSelector(employees, cart.employeeId),
-                  const SizedBox(height: 12),
-                  _buildPaymentSelector(paymentMethods, cart.paymentMethod),
                   const SizedBox(height: 12),
                   _buildInstallmentsField(),
                   const SizedBox(height: 12),
@@ -249,7 +250,7 @@ class _SalePageState extends ConsumerState<SalePage> {
     final activeEmployees = employees.where((employee) => employee.isAtivo).toList();
     final options = <String, String>{for (final employee in activeEmployees) employee.id: employee.nome};
     return AppFormSelectField<String>(
-      label: 'Funcionário', 
+      label: 'Vendedor', 
       value: selectedEmployeeId, 
       options: options,
       sheetTitle: 'Selecione o Funcionário', 
@@ -260,38 +261,6 @@ class _SalePageState extends ConsumerState<SalePage> {
         icon: Icons.badge_outlined, 
         backgroundColor: AppMenuColors.employees,
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EmployeeFormPage())),
-      ),
-    );
-  }
-
-  Widget _buildPaymentSelector(
-    List<PaymentMethodEntity> paymentMethods,
-    String? selectedPaymentMethod,
-  ) {
-    final activeMethods = paymentMethods.where((method) => method.isAtivo).toList();
-    final paymentOptions = <String, String>{
-      for (final method in activeMethods) method.nome: method.nome,
-    };
-    final selectedValue = paymentOptions.containsKey(selectedPaymentMethod)
-        ? selectedPaymentMethod
-        : null;
-
-    return AppFormSelectField<String>(
-      label: 'Forma de pagamento',
-      value: selectedValue,
-      options: paymentOptions,
-      sheetTitle: 'Selecione o Pagamento',
-      primaryColor: AppMenuColors.paymentMethods,
-      onChanged: (value) =>
-          ref.read(saleCartProvider.notifier).setPaymentMethod(value),
-      action: AppFormSelectAction(
-        label: 'Nova forma de pagamento',
-        icon: Icons.add_card,
-        backgroundColor: AppMenuColors.paymentMethods,
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const PaymentMethodFormPage()),
-        ),
       ),
     );
   }
@@ -396,7 +365,7 @@ class _SalePageState extends ConsumerState<SalePage> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Informe a quantidade de parcelas.')));
       return;
     }
-    final draft = SaleDraft(id: const Uuid().v4(), customerId: cart.customerId, employeeId: cart.employeeId, paymentMethod: cart.paymentMethod, installments: installments, discountCentavos: cart.discountCentavos, soldAt: DateTime.now().toUtc(), items: cart.items);
+    final draft = SaleDraft(id: const Uuid().v4(), customerId: cart.customerId, employeeId: cart.employeeId, installments: installments, discountCentavos: cart.discountCentavos, soldAt: DateTime.now().toUtc(), items: cart.items);
     _pendingDraft = draft;
     _pendingCustomer = _findCustomer(customers, draft.customerId);
     _pendingEmployee = _findEmployee(employees, draft.employeeId);

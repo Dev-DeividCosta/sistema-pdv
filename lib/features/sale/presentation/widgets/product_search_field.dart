@@ -45,7 +45,7 @@ class _ProductSearchFieldState extends State<ProductSearchField> {
           onChanged: (value) => setState(() => _query = value),
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            labelText: 'Adicionar produto',
+            labelText: 'Procurar produto',
             hintText: 'Buscar por nome ou código de barras',
             labelStyle: const TextStyle(color: Colors.white70),
             hintStyle: TextStyle(color: Colors.grey[500]),

@@ -18,7 +18,7 @@ class CustomerMenuPage extends StatelessWidget {
     return BaseMenuPage(
       title: 'Menu de Clientes',
       appBarColor: AppMenuColors.customer,
-      items: menuItems.take(2).toList(),
+      items: menuItems.take(3).toList(),
     );
   }
 }
