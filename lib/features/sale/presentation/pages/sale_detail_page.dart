@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/widgets/navigation/app_app_bar.dart';
 import '../../../../core/widgets/navigation/app_navigation_bar.dart';
+import '../../../../core/widgets/forms/app_form_select_field.dart';
 import '../../../company/domain/entities/company.dart';
 import '../../../company/presentation/providers/company_provider.dart';
 import '../../../customer/domain/entities/customer.dart';
@@ -19,6 +20,7 @@ import '../../../payment/presentation/pages/payment_page.dart';
 import '../../../payment/presentation/providers/payment_provider.dart';
 import '../../../payment/presentation/utils/receipt_pdf_builder.dart';
 import '../../domain/entities/sale.dart';
+import '../../domain/entities/sale_status.dart';
 import '../providers/sale_provider.dart';
 
 class SaleDetailPage extends ConsumerWidget {
@@ -28,6 +30,18 @@ class SaleDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(updateSaleStatusProvider, (previous, next) {
+      next.whenOrNull(
+        error: (error, _) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Não foi possível atualizar o status: $error'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+      );
+    });
     final saleAsync = ref.watch(saleByIdProvider(saleId));
     final customersAsync = ref.watch(customersStreamProvider);
     final companyAsync = ref.watch(companyProvider);
@@ -92,7 +106,7 @@ class SaleDetailPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _headerCard(context, sale, customer, employee, company, customerName, employeeName),
+              _headerCard(context, ref, sale, customer, employee, company, customerName, employeeName),
               const SizedBox(height: 16),
               const Text(
                 'Itens da venda',
@@ -121,6 +135,7 @@ class SaleDetailPage extends ConsumerWidget {
 
   Widget _headerCard(
     BuildContext context,
+    WidgetRef ref,
     SaleEntity sale,
     CustomerEntity? customer,
     EmployeeEntity? employee,
@@ -142,12 +157,20 @@ class SaleDetailPage extends ConsumerWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  'Código da venda: ${_shortId(sale.id)}',
-                  style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w700),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Código da venda',
+                      style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                    ),
+                    Text(
+                      _shortId(sale.id),
+                      style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w700),
+                    ),
+                  ],
                 ),
               ),
-              _statusTag(sale.status),
               IconButton(
                 tooltip: 'Compartilhar comprovante da compra',
                 onPressed: () => _shareSale(context, sale, customer, employee, company),
@@ -156,6 +179,22 @@ class SaleDetailPage extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
+          AppFormSelectField<String>(
+            label: 'Status da venda',
+            value: sale.status,
+            options: {
+              for (final status in SaleStatus.values) status.value: status.label,
+            },
+            optionColorBuilder: (value) => value.saleStatus.color,
+            sheetTitle: 'Alterar status da venda',
+            primaryColor: AppMenuColors.sale,
+            disabledOptions: const {},
+            onChanged: (value) {
+              if (value == null || value == sale.status) return;
+              ref.read(updateSaleStatusProvider.notifier).changeStatus(sale.id, value);
+            },
+          ),
+          const SizedBox(height: 20),
           _metadata('Data da venda', _formatDateTime(sale.soldAt)),
           _metadata('Cliente', customerName ?? (sale.customerId == null ? 'Não informado' : 'Cliente vinculado')),
           if (sale.customerId != null && customerName == null)
@@ -179,11 +218,25 @@ class SaleDetailPage extends ConsumerWidget {
       child: Column(
         children: [
           for (var index = 0; index < items.length; index++) ...[
-            ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              title: Text(items[index].productNome, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-              subtitle: Text('${items[index].quantity} x ${_money(items[index].unitPriceCentavos)}', style: TextStyle(color: Colors.grey[400])),
-              trailing: Text(_money(items[index].totalCentavos), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(items[index].productNome, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 2),
+                        Text('${items[index].quantity} x ${_money(items[index].unitPriceCentavos)}', style: TextStyle(color: Colors.grey[400])),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(_money(items[index].totalCentavos), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ),
             if (index != items.length - 1) const Divider(color: Colors.white12, height: 1),
           ],
@@ -268,34 +321,93 @@ class SaleDetailPage extends ConsumerWidget {
     final employee = payment.employeeId == null
         ? null
         : employees.where((item) => item.id == payment.employeeId).firstOrNull;
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-      leading: CircleAvatar(
-        backgroundColor: AppMenuColors.sale.withValues(alpha: 0.18),
-        child: const Icon(Icons.payments_outlined, color: AppMenuColors.sale),
-      ),
-      title: Text(_money(payment.amountCentavos), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-      subtitle: Text(
-        '${_formatDateTime(payment.paidAt)}\nForma: ${payment.paymentMethodName ?? 'Não informada'}\nCobrado por: ${employee?.nome ?? 'Não informado'}\nSaldo devedor após registro: ${_money(remainingAfter)}',
-        style: TextStyle(color: Colors.grey[400], height: 1.35),
-      ),
-      isThreeLine: true,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _paymentStatusTag(payment.paymentStatus),
-          IconButton(
-            tooltip: 'Compartilhar comprovante do pagamento',
-            onPressed: () => _sharePayment(
-              context,
-              sale,
-              payment,
-              employee,
-              customer,
-              company,
-              sale.totalCentavos - remainingAfter,
+          Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: AppMenuColors.sale.withValues(alpha: 0.18),
+                child: const Icon(Icons.payments_outlined, color: AppMenuColors.sale),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _money(payment.amountCentavos),
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 18),
+                    ),
+                    const SizedBox(height: 6),
+                    _paymentStatusTag(payment.paymentStatus),
+                  ],
+                ),
+              ),
+              IconButton(
+                tooltip: 'Compartilhar comprovante do pagamento',
+                onPressed: () => _sharePayment(
+                  context,
+                  sale,
+                  payment,
+                  employee,
+                  customer,
+                  company,
+                  sale.totalCentavos - remainingAfter,
+                ),
+                icon: const Icon(Icons.share_outlined, color: Colors.white),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.black12,
+              borderRadius: BorderRadius.circular(8),
             ),
-            icon: const Icon(Icons.share_outlined, color: Colors.white70),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _paymentDetailText('Data', _formatDateTime(payment.paidAt)),
+                _paymentDetailText('Forma', payment.paymentMethodName ?? 'Não informada'),
+                _paymentDetailText('Cobrado por', employee?.nome ?? 'Não informado'),
+                const SizedBox(height: 6),
+                const Divider(color: Colors.white12, height: 1),
+                const SizedBox(height: 8),
+                _paymentDetailText('Saldo devedor', _money(remainingAfter), isHighlighted: true),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _paymentDetailText(String label, String value, {bool isHighlighted = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(label, style: TextStyle(color: Colors.grey[500], fontSize: 13)),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value,
+              style: TextStyle(
+                color: isHighlighted ? Colors.white : Colors.grey[300],
+                fontWeight: isHighlighted ? FontWeight.bold : FontWeight.normal,
+                fontSize: 13,
+              ),
+            ),
           ),
         ],
       ),
@@ -390,8 +502,17 @@ class SaleDetailPage extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: Colors.white, fontWeight: emphasized ? FontWeight.w800 : FontWeight.normal, fontSize: emphasized ? 18 : 14)),
-        Text(_money(centavos), style: TextStyle(color: Colors.white, fontWeight: emphasized ? FontWeight.w800 : FontWeight.normal, fontSize: emphasized ? 22 : 14)),
+        Expanded(
+          child: Text(
+            label, 
+            style: TextStyle(color: Colors.white, fontWeight: emphasized ? FontWeight.w800 : FontWeight.normal, fontSize: emphasized ? 18 : 14),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          _money(centavos), 
+          style: TextStyle(color: Colors.white, fontWeight: emphasized ? FontWeight.w800 : FontWeight.normal, fontSize: emphasized ? 22 : 14),
+        ),
       ],
     );
   }
@@ -402,19 +523,17 @@ class SaleDetailPage extends ConsumerWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 145, child: Text(label, style: TextStyle(color: Colors.grey[500]))),
-          Expanded(child: Text(value, style: const TextStyle(color: Colors.white))),
+          Expanded(
+            flex: 2, 
+            child: Text(label, style: TextStyle(color: Colors.grey[500]))
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 3, 
+            child: Text(value, style: const TextStyle(color: Colors.white))
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _statusTag(String status) {
-    final isCompleted = status == 'completed';
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(color: isCompleted ? const Color(0xFF86C5A6) : Colors.redAccent, borderRadius: BorderRadius.circular(20)),
-      child: Text(isCompleted ? 'Concluída' : status, style: const TextStyle(color: Colors.white, fontSize: 12)),
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 
 import '../../../../app/database/app_database.dart';
 import '../models/sale_model.dart';
+import '../../domain/entities/sale_status.dart';
 
 class SaleLocalDataSource {
   final AppDatabase _db;
@@ -63,7 +64,7 @@ class SaleLocalDataSource {
           id: saleId,
           customerId: row.readNullable<String>('customer_id'),
           employeeId: row.readNullable<String>('employee_id'),
-          status: row.read<String>('status'),
+          status: SaleStatus.normalizeValue(row.read<String>('status')),
           paymentMethod: row.readNullable<String>('payment_method'),
           installments: row.read<int>('installments'),
           subtotalCentavos: row.read<int>('subtotal_centavos'),
@@ -103,7 +104,7 @@ class SaleLocalDataSource {
       id: row.read<String>('id'),
       customerId: row.readNullable<String>('customer_id'),
       employeeId: row.readNullable<String>('employee_id'),
-      status: row.read<String>('status'),
+      status: SaleStatus.normalizeValue(row.read<String>('status')),
       paymentMethod: row.readNullable<String>('payment_method'),
       installments: row.read<int>('installments'),
       subtotalCentavos: row.read<int>('subtotal_centavos'),
@@ -218,6 +219,40 @@ class SaleLocalDataSource {
       }
     });
 
+    _saleChanges.add(null);
+  }
+
+  Future<void> updateStatus(String saleId, String status) async {
+    await _db.ensureSalesTables();
+    final requested = SaleStatus.fromValue(status);
+    if (requested == SaleStatus.paid) {
+      final rows = await _db.customSelect(
+        '''SELECT s.total_centavos,
+                  COALESCE(SUM(CASE WHEN p.payment_status = ? THEN p.amount_centavos ELSE 0 END), 0) AS paid_centavos
+           FROM sales s LEFT JOIN sale_payments p ON p.sale_id = s.id
+           WHERE s.id = ? AND s.is_deleted = 0 GROUP BY s.id''',
+        variables: [
+          Variable<String>('pagamento_concluido'),
+          Variable<String>(saleId),
+        ],
+      ).get();
+      if (rows.isEmpty) throw Exception('Venda não encontrada.');
+      final total = rows.first.read<int>('total_centavos');
+      final paid = rows.first.read<int>('paid_centavos');
+      if (paid < total) {
+        throw Exception('A venda só pode ser marcada como Quitado após a quitação efetiva do pagamento.');
+      }
+    }
+    await _db.customStatement(
+      'UPDATE sales SET status = ? WHERE id = ? AND is_deleted = 0',
+      [requested.value, saleId],
+    );
+    final exists = await _db.customSelect(
+      'SELECT id FROM sales WHERE id = ? AND is_deleted = 0',
+      variables: [Variable<String>(saleId)],
+    ).get();
+    final updated = exists.length;
+    if (updated == 0) throw Exception('Venda não encontrada.');
     _saleChanges.add(null);
   }
 

@@ -1,3 +1,5 @@
+import 'sale_status.dart';
+
 class SaleProduct {
   final String id;
   final String nomeProduto;
@@ -110,6 +112,8 @@ class SaleEntity {
   final DateTime soldAt;
   final DateTime createdAt;
   final List<SaleItem> items;
+
+  SaleStatus get saleStatus => status.saleStatus;
 
   const SaleEntity({
     required this.id,

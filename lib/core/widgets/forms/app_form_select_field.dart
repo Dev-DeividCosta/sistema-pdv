@@ -25,6 +25,9 @@ class AppFormSelectField<T> extends StatelessWidget {
   final String? sheetTitle;
   final AppFormSelectAction? action;
   final Color? primaryColor;
+  final Color? Function(T value)? optionColorBuilder;
+  final Set<T> disabledOptions;
+  final String? disabledOptionMessage;
 
   const AppFormSelectField({
     super.key,
@@ -38,6 +41,9 @@ class AppFormSelectField<T> extends StatelessWidget {
     this.sheetTitle,
     this.action,
     this.primaryColor,
+    this.optionColorBuilder,
+    this.disabledOptions = const {},
+    this.disabledOptionMessage,
   });
 
   void _showBottomSheet(BuildContext context, FormFieldState<T> fieldState) {
@@ -98,10 +104,40 @@ class AppFormSelectField<T> extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final entry = options.entries.elementAt(index);
                     final isSelected = entry.key == value;
+                    final isDisabled = disabledOptions.contains(entry.key);
+                    final optionColor = optionColorBuilder?.call(entry.key);
                     return ListTile(
-                      title: Text(entry.value, style: TextStyle(color: isSelected ? activeColor : Colors.white)),
-                      trailing: isSelected ? Icon(Icons.check_circle, color: activeColor) : null,
+                      leading: optionColor == null
+                          ? null
+                          : Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: optionColor,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                      title: Text(
+                        entry.value,
+                        style: TextStyle(
+                          color: isDisabled
+                              ? Colors.orangeAccent
+                              : (isSelected ? activeColor : Colors.white),
+                        ),
+                      ),
+                      subtitle: isDisabled && disabledOptionMessage != null
+                          ? Text(disabledOptionMessage!, style: const TextStyle(color: Colors.white54, fontSize: 12))
+                          : null,
+                      trailing: isDisabled
+                          ? const Icon(Icons.lock_outline, color: Colors.orangeAccent)
+                          : (isSelected ? Icon(Icons.check_circle, color: activeColor) : null),
                       onTap: () {
+                        if (isDisabled) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(disabledOptionMessage ?? 'Esta opção não está disponível.')),
+                          );
+                          return;
+                        }
                         onChanged?.call(entry.key);
                         fieldState.didChange(entry.key);
                         Navigator.pop(context);
@@ -136,6 +172,22 @@ class AppFormSelectField<T> extends StatelessWidget {
             filled: true,
             fillColor: readOnly ? Colors.white.withValues(alpha: 0.05) : const Color(0xFF424242),
             errorText: fieldState.errorText,
+            prefixIcon: value != null && optionColorBuilder != null
+                ? Padding(
+                    padding: const EdgeInsets.only(left: 12, right: 8),
+                    child: Center(
+                      widthFactor: 1,
+                      child: Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: optionColorBuilder!(value as T),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                  )
+                : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,

@@ -32,4 +32,8 @@ class SaleRepositoryImpl implements SaleRepository {
   Future<void> completeSale(SaleDraft draft) {
     return _localDataSource.completeSale(SaleModel.fromDraft(draft));
   }
+
+  @override
+  Future<void> updateStatus(String saleId, String status) =>
+      _localDataSource.updateStatus(saleId, status);
 }

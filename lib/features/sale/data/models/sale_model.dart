@@ -1,4 +1,5 @@
 import '../../domain/entities/sale.dart';
+import '../../domain/entities/sale_status.dart';
 
 class SaleItemModel {
   final String id;
@@ -79,7 +80,7 @@ class SaleModel {
       id: saleId,
       customerId: draft.customerId,
       employeeId: draft.employeeId,
-      status: 'completed',
+      status: SaleStatus.pending.value,
       paymentMethod: draft.paymentMethod,
       installments: draft.installments,
       subtotalCentavos: draft.subtotalCentavos,
@@ -98,7 +99,7 @@ class SaleModel {
       id: id,
       customerId: customerId,
       employeeId: employeeId,
-      status: status,
+      status: SaleStatus.normalizeValue(status),
       paymentMethod: paymentMethod,
       installments: installments,
       subtotalCentavos: subtotalCentavos,

@@ -7,6 +7,8 @@ import '../../../../core/widgets/navigation/app_navigation_bar.dart';
 import '../../../customer/domain/entities/customer.dart';
 import '../../../customer/presentation/providers/customer_form_provider.dart';
 import '../../domain/entities/sale.dart';
+import '../../domain/entities/sale_status.dart';
+import '../../../../core/widgets/sale_status_tag.dart';
 import '../providers/sale_provider.dart';
 import 'sale_detail_page.dart';
 import 'sale_page.dart';
@@ -134,10 +136,10 @@ class _SaleHistoryPageState extends ConsumerState<SaleHistoryPage> {
       dropdownColor: const Color(0xFF262626),
       style: const TextStyle(color: Colors.white),
       decoration: _filterDecoration('Status'),
-      items: const [
-        DropdownMenuItem(value: 'all', child: Text('Todos os status')),
-        DropdownMenuItem(value: 'completed', child: Text('Concluídas')),
-        DropdownMenuItem(value: 'cancelled', child: Text('Canceladas')),
+      items: [
+        const DropdownMenuItem(value: 'all', child: Text('Todos os status')),
+        for (final status in SaleStatus.values)
+          DropdownMenuItem(value: status.value, child: Text(status.label)),
       ],
     );
   }
@@ -173,16 +175,16 @@ class _SaleHistoryPageState extends ConsumerState<SaleHistoryPage> {
     final productNames = sale.items.map((i) => i.productNome).take(2).join(', ');
     final extraCount = sale.items.length > 2 ? ' e mais ${sale.items.length - 2}' : '';
     final itemsSummary = '$productNames$extraCount';
-    
-    final isCompleted = sale.status == 'completed';
+    final status = sale.saleStatus;
+    final statusColor = status.color;
 
     return Card(
-      color: const Color(0xFF262626),
+      color: statusColor.withValues(alpha: 0.10),
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isCompleted ? Colors.transparent : Colors.redAccent.withValues(alpha: 0.3),
+          color: statusColor.withValues(alpha: 0.55),
           width: 1,
         ),
       ),
@@ -261,21 +263,7 @@ class _SaleHistoryPageState extends ConsumerState<SaleHistoryPage> {
                     '#${_shortId(sale.id)}',
                     style: TextStyle(color: Colors.grey[500], fontSize: 12, fontWeight: FontWeight.w600),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isCompleted ? const Color(0xFF86C5A6).withValues(alpha: 0.15) : Colors.redAccent.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      isCompleted ? 'Concluída' : 'Cancelada',
-                      style: TextStyle(
-                        color: isCompleted ? const Color(0xFF86C5A6) : Colors.redAccent,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                  SaleStatusTag(status: sale.status, compact: true),
                 ],
               ),
             ],
@@ -326,6 +314,7 @@ class _SaleHistoryPageState extends ConsumerState<SaleHistoryPage> {
       if (day.isBefore(start) || day.isAfter(end)) return false;
     }
     
+    final status = sale.saleStatus;
     final query = _query.trim().toLowerCase();
     if (query.isEmpty) return true;
 
@@ -338,7 +327,7 @@ class _SaleHistoryPageState extends ConsumerState<SaleHistoryPage> {
     }
 
     return sale.id.toLowerCase().contains(query) ||
-        sale.status.toLowerCase().contains(query) ||
+        status.label.toLowerCase().contains(query) || sale.status.toLowerCase().contains(query) ||
         (sale.paymentMethod ?? '').toLowerCase().contains(query) ||
         customerName.contains(query) ||
         sale.items.any((item) => item.productNome.toLowerCase().contains(query));

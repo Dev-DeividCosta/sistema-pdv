@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 
 import '../../../../app/database/app_database.dart';
 import '../../domain/entities/payment.dart';
+import '../../../sale/domain/entities/sale_status.dart';
 import '../models/payment_model.dart';
 
 class PaymentLocalDataSource {
@@ -108,6 +109,13 @@ class PaymentLocalDataSource {
           Variable<String>(payment.createdAt.toUtc().toIso8601String()),
         ],
       );
+
+      if (payment.paymentStatus == PaymentStatus.completed && paid + payment.amountCentavos >= total) {
+        await _db.customStatement(
+          'UPDATE sales SET status = ? WHERE id = ? AND is_deleted = 0',
+          [SaleStatus.paid.value, payment.saleId],
+        );
+      }
     });
 
     _paymentChanges.add(payment.saleId);

@@ -124,7 +124,7 @@ class _PaymentReceiptPageState extends State<PaymentReceiptPage> {
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed: () => Navigator.of(context).popUntil((route) => route.isFirst),
+                    onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.check),
                     label: const Text('CONCLUIR'),
                     style: OutlinedButton.styleFrom(foregroundColor: Colors.white),

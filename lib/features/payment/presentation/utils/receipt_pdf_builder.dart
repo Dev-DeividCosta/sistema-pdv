@@ -7,6 +7,7 @@ import '../../../company/domain/entities/company.dart';
 import '../../../customer/domain/entities/customer.dart';
 import '../../../employee/domain/entities/employee.dart';
 import '../../../sale/domain/entities/sale.dart';
+import '../../../sale/domain/entities/sale_status.dart';
 import '../../domain/entities/payment.dart';
 
 class ReceiptPdfBuilder {
@@ -209,14 +210,6 @@ class ReceiptPdfBuilder {
         '${two(local.hour)}:${two(local.minute)}';
   }
 
-  static String _saleStatus(String status) {
-    switch (status) {
-      case 'completed':
-        return 'Concluída';
-      case 'cancelled':
-        return 'Cancelada';
-      default:
-        return status;
-    }
-  }
+  static String _saleStatus(String status) => status.saleStatus.label;
+
 }

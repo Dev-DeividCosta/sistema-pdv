@@ -8,4 +8,6 @@ abstract class SaleRepository {
   Future<SaleEntity> getSaleById(String id);
 
   Future<void> completeSale(SaleDraft draft);
+
+  Future<void> updateStatus(String saleId, String status);
 }
