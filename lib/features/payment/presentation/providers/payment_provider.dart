@@ -7,6 +7,7 @@ import '../../data/datasources/payment_local_datasource.dart';
 import '../../data/repositories/payment_repository_impl.dart';
 import '../../domain/entities/payment.dart';
 import '../../domain/repositories/payment_repository.dart';
+import '../../../sale/presentation/providers/sale_provider.dart';
 
 final paymentLocalDataSourceProvider = Provider<PaymentLocalDataSource>(
   (ref) => PaymentLocalDataSource(ref.watch(appDatabaseProvider)),
@@ -30,7 +31,12 @@ class RegisterPaymentNotifier extends AutoDisposeAsyncNotifier<PaymentEntity?> {
     state = await AsyncValue.guard(
       () => ref.read(paymentRepositoryProvider).registerPayment(payment),
     );
-    return state.asData?.value;
+    final result = state.asData?.value;
+    if (result != null) {
+      ref.invalidate(saleByIdProvider(payment.saleId));
+      ref.invalidate(saleHistoryStreamProvider);
+    }
+    return result;
   }
 }
 

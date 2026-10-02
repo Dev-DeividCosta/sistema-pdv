@@ -208,6 +208,31 @@ class CompleteSaleNotifier extends AutoDisposeAsyncNotifier<void> {
   }
 }
 
+
+class UpdateSaleStatusNotifier extends AutoDisposeAsyncNotifier<void> {
+  @override
+  FutureOr<void> build() {}
+
+  Future<void> changeStatus(String saleId, String status) async {
+    var disposed = false;
+    ref.onDispose(() => disposed = true);
+    state = const AsyncLoading();
+    try {
+      await ref.read(saleRepositoryProvider).updateStatus(saleId, status);
+      if (disposed) return;
+      state = const AsyncData<void>(null);
+      ref.invalidate(saleByIdProvider(saleId));
+      ref.invalidate(saleHistoryStreamProvider);
+    } catch (error, stackTrace) {
+      if (disposed) return;
+      state = AsyncError<void>(error, stackTrace);
+    }
+  }
+}
+
+final updateSaleStatusProvider = AutoDisposeAsyncNotifierProvider<
+    UpdateSaleStatusNotifier, void>(UpdateSaleStatusNotifier.new);
+
 final completeSaleProvider =
     AutoDisposeAsyncNotifierProvider<CompleteSaleNotifier, void>(
   CompleteSaleNotifier.new,
