@@ -19,7 +19,13 @@ class ItineraryLocalDataSource {
             db.itineraryItems.userId.equals(userId) &
             db.itineraryItems.cityId.equals(cityId),
       ),
-    ])..where(db.customers.cityId.equals(cityId));
+    ])..where(
+      // O status não é filtrado na origem. O item precisa continuar no
+      // stream para reaparecer imediatamente quando o cliente for reativado;
+      // a página aplica o filtro visual com o status mais recente.
+      (db.customers.cityId.equals(cityId)) &
+          db.customers.isDeleted.equals(false),
+    );
 
     return query.watch().map((rows) {
       final items = rows.map((row) {

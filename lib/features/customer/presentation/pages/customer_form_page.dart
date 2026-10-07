@@ -114,8 +114,17 @@ class _CustomerFormPageState extends ConsumerState<CustomerFormPage> {
     return value.isEmpty ? null : value;
   }
 
-  void _save() {
-    if (_isReadOnly || !_formKey.currentState!.validate()) return;
+  Future<void> _save() async {
+    if (_isReadOnly) return;
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Revise os campos destacados antes de salvar.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
     final current = widget.customer;
     final customerToSave = (_currentMode.isEditing && current != null)
         ? current.copyWith(
@@ -150,7 +159,7 @@ class _CustomerFormPageState extends ConsumerState<CustomerFormPage> {
             observacoes: _optionalValue(_observacoesController),
             isAtivo: _isAtivo,
           );
-    ref.read(customerFormProvider.notifier).saveCustomer(customerToSave);
+    await ref.read(customerFormProvider.notifier).saveCustomer(customerToSave);
   }
 
   Future<void> _openCityRegistration() async {

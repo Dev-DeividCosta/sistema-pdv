@@ -5,6 +5,7 @@ import '../../data/datasources/itinerary_local_datasource.dart';
 import '../../data/repositories/itinerary_repository_impl.dart';
 import '../../domain/entities/itinerary_item.dart';
 import '../../domain/repositories/itinerary_repository.dart';
+import '../../../customer/presentation/providers/customer_form_provider.dart';
 
 final itineraryLocalDataSourceProvider = Provider<ItineraryLocalDataSource>((ref) {
   return ItineraryLocalDataSource(ref.watch(appDatabaseProvider));
@@ -19,6 +20,10 @@ final itineraryRepositoryProvider = Provider<ItineraryRepository>((ref) {
 const currentUserId = 'LOCAL_DEVICE_USER';
 
 final itineraryListProvider = StreamProvider.family<List<ItineraryItemEntity>, String>((ref, cityId) {
+  // O JOIN do PowerSync pode não emitir novamente quando apenas o cliente
+  // muda de ativo para inativo. Declarar a dependência garante que o roteiro
+  // seja reconstruído assim que o stream de clientes receber essa alteração.
+  ref.watch(customersStreamProvider);
   return ref.watch(itineraryRepositoryProvider).watchItineraryForCity(cityId, currentUserId);
 });
 
