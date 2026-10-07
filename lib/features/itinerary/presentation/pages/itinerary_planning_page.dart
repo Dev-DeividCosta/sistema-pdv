@@ -10,6 +10,8 @@ import '../../../../core/widgets/navigation/app_app_bar.dart';
 import '../../../../core/widgets/navigation/app_navigation_bar.dart';
 import '../providers/itinerary_provider.dart';
 import '../../domain/entities/itinerary_item.dart';
+import '../../../customer/presentation/providers/customer_form_provider.dart';
+import '../../../customer/domain/entities/customer.dart';
 
 class ItineraryPlanningPage extends ConsumerStatefulWidget {
   final String cityId;
@@ -124,6 +126,7 @@ class _ItineraryPlanningPageState extends ConsumerState<ItineraryPlanningPage> {
   @override
   Widget build(BuildContext context) {
     final itineraryAsync = ref.watch(itineraryListProvider(widget.cityId));
+    final customersAsync = ref.watch(customersStreamProvider);
     final isSaving = ref.watch(itineraryNotifierProvider).isLoading;
 
     return Scaffold(
@@ -145,10 +148,26 @@ class _ItineraryPlanningPageState extends ConsumerState<ItineraryPlanningPage> {
         loading: () => const Center(child: CircularProgressIndicator(color: AppMenuColors.itinerary)),
         error: (err, stack) => Center(child: Text('Erro: $err', style: const TextStyle(color: Colors.white))),
         data: (items) {
-          final visitedCount = items.where((u) => u.isVisited).length;
-          final totalCount = items.length;
+          // Clientes inativos permanecem no banco e podem voltar ao roteiro
+          // quando forem reativados, mas ficam arquivados fora da operação.
+          // O status mais recente vem do stream simples de clientes. Isso
+          // evita depender apenas da invalidação do JOIN do PowerSync.
+          final latestCustomers = customersAsync.valueOrNull;
+          final latestById = latestCustomers == null
+              ? const <String, CustomerEntity>{}
+              : <String, CustomerEntity>{
+                  for (final customer in latestCustomers) customer.id: customer,
+                };
+          final visibleItems = items
+              .map((item) => item.copyWith(
+                    customer: latestById[item.customer.id] ?? item.customer,
+                  ))
+              .where((item) => item.customer.isAtivo)
+              .toList();
+          final visitedCount = visibleItems.where((u) => u.isVisited).length;
+          final totalCount = visibleItems.length;
 
-          if (items.isEmpty) {
+          if (visibleItems.isEmpty) {
             return const Center(
               child: Text(
                 'Nenhum cliente encontrado para esta cidade.', 
@@ -162,14 +181,14 @@ class _ItineraryPlanningPageState extends ConsumerState<ItineraryPlanningPage> {
               ItineraryProgressHeader(
                 visitedCount: visitedCount,
                 totalCount: totalCount,
-                onReset: isSaving ? null : () => _confirmResetVisits(items),
+                onReset: isSaving ? null : () => _confirmResetVisits(visibleItems),
               ),
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.only(top: 4.0, bottom: 110.0),
-                  itemCount: items.length,
+                  itemCount: visibleItems.length,
                   itemBuilder: (context, index) {
-                    final item = items[index];
+                    final item = visibleItems[index];
                     return Align(
                       alignment: Alignment.topCenter,
                       child: ConstrainedBox(
@@ -188,8 +207,10 @@ class _ItineraryPlanningPageState extends ConsumerState<ItineraryPlanningPage> {
                           },
                           onToggleVisited: isSaving ? () {} : () => _toggleVisited(item),
                           onConfirmNew: isSaving ? () {} : () => _confirmNew(item, index),
-                          onMoveUp: !isSaving && index > 0 ? () => _moveUp(index, items) : null,
-                          onMoveDown: !isSaving && index < items.length - 1 ? () => _moveDown(index, items) : null,
+                          onMoveUp: !isSaving && index > 0 ? () => _moveUp(index, visibleItems) : null,
+                          onMoveDown: !isSaving && index < visibleItems.length - 1
+                              ? () => _moveDown(index, visibleItems)
+                              : null,
                         ),
                       ),
                     );

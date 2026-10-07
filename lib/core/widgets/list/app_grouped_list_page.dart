@@ -19,6 +19,7 @@ class AppGroupedListPage<T> extends StatefulWidget {
   final String? actionLabel;
   final IconData actionIcon;
   final Color? actionBackgroundColor;
+  final Widget? header;
 
   const AppGroupedListPage({
     super.key,
@@ -36,6 +37,7 @@ class AppGroupedListPage<T> extends StatefulWidget {
     this.actionLabel,
     this.actionIcon = Icons.add,
     this.actionBackgroundColor,
+    this.header,
   });
 
   @override
@@ -81,14 +83,13 @@ class _AppGroupedListPageState<T> extends State<AppGroupedListPage<T>> {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 600),
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16,
-                      right: 16,
-                      top: 8,
-                      bottom: 120,
-                    ),
+                    padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 120),
                     child: Column(
                       children: [
+                        if (widget.header != null) ...[
+                          widget.header!,
+                          const SizedBox(height: 16),
+                        ],
                         _SearchField(
                           controller: _searchController,
                           hintText: widget.searchHint,
@@ -116,9 +117,7 @@ class _AppGroupedListPageState<T> extends State<AppGroupedListPage<T>> {
         final filteredItems = items.where(_matchesSearch).toList();
         if (filteredItems.isEmpty) {
           return _Message(
-            text: _searchQuery.isEmpty
-                ? widget.emptyMessage
-                : '${widget.noResultsMessage} "$_searchQuery".',
+            text: _searchQuery.isEmpty ? widget.emptyMessage : '${widget.noResultsMessage} "$_searchQuery".',
           );
         }
 
@@ -141,9 +140,7 @@ class _AppGroupedListPageState<T> extends State<AppGroupedListPage<T>> {
           ],
         );
       },
-      loading: () => const _Message(
-        child: CircularProgressIndicator(color: Colors.white),
-      ),
+      loading: () => const _Message(child: CircularProgressIndicator(color: Colors.white)),
       error: (error, _) => _Message(
         text: '${widget.loadingErrorLabel}: $error',
         textColor: Colors.redAccent,
@@ -152,15 +149,11 @@ class _AppGroupedListPageState<T> extends State<AppGroupedListPage<T>> {
   }
 
   bool _matchesSearch(T item) {
-    return widget.searchFields(item).any(
-      (field) => field.toLowerCase().contains(_searchQuery),
-    );
+    return widget.searchFields(item).any((field) => field.toLowerCase().contains(_searchQuery));
   }
 
   int _compareItems(T a, T b) {
-    return widget.groupKey(a).toLowerCase().compareTo(
-          widget.groupKey(b).toLowerCase(),
-        );
+    return widget.groupKey(a).toLowerCase().compareTo(widget.groupKey(b).toLowerCase());
   }
 
   String _normalizedGroupKey(String value) {
@@ -174,11 +167,7 @@ class _SearchField extends StatelessWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
 
-  const _SearchField({
-    required this.controller,
-    required this.hintText,
-    required this.onChanged,
-  });
+  const _SearchField({required this.controller, required this.hintText, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -192,10 +181,7 @@ class _SearchField extends StatelessWidget {
         prefixIcon: const Icon(Icons.search, color: Colors.grey),
         filled: true,
         fillColor: const Color(0xFF262626),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
         contentPadding: const EdgeInsets.symmetric(vertical: 12),
       ),
     );
@@ -213,9 +199,7 @@ class _Message extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 32),
-      child: Center(
-        child: child ?? Text(text!, style: TextStyle(color: textColor)),
-      ),
+      child: Center(child: child ?? Text(text!, style: TextStyle(color: textColor))),
     );
   }
 }

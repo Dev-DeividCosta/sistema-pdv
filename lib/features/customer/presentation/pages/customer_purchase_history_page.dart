@@ -25,7 +25,7 @@ class _CustomerPurchaseHistoryPageState
     extends ConsumerState<CustomerPurchaseHistoryPage> {
   final _searchController = TextEditingController();
   String _query = '';
-  String _status = 'all';
+  String _status = SaleStatus.pending.value;
   DateTimeRange? _dateRange;
 
   @override
