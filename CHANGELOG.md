@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.16.0...v1.17.0) (2026-10-07)
+
+
+### Features
+
+* **customer:** adiciona arquivamento e ajusta roteiros ([#42](https://github.com/Dev-DeividCosta/sistema-pdv/issues/42)) ([23f1997](https://github.com/Dev-DeividCosta/sistema-pdv/commit/23f199743ea55c9e8fdfb7ab80e50c7a59c0d787))
+
 # [1.16.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.15.0...v1.16.0) (2026-10-02)
 
 
