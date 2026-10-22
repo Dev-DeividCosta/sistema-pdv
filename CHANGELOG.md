@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.17.0...v1.18.0) (2026-10-22)
+
+
+### Features
+
+* **financial:** implementa relatório financeiro ([#44](https://github.com/Dev-DeividCosta/sistema-pdv/issues/44)) ([5aa83fb](https://github.com/Dev-DeividCosta/sistema-pdv/commit/5aa83fb3c9ae9090721319bf711b1f0c85681308))
+
 # [1.17.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.16.0...v1.17.0) (2026-10-07)
 
 
