@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.20.0...v1.21.0) (2026-10-28)
+
+
+### Features
+
+* **roteiro:** adiciona busca de clientes ([#50](https://github.com/Dev-DeividCosta/sistema-pdv/issues/50)) ([dc53325](https://github.com/Dev-DeividCosta/sistema-pdv/commit/dc53325a6d7b65489b88f9e2559378024836433f))
+
 # [1.20.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.19.0...v1.20.0) (2026-10-28)
 
 
