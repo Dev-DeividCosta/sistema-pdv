@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.19.0...v1.20.0) (2026-10-28)
+
+
+### Features
+
+* **branding:** personaliza nome e icones do aplicativo ([#48](https://github.com/Dev-DeividCosta/sistema-pdv/issues/48)) ([0e36715](https://github.com/Dev-DeividCosta/sistema-pdv/commit/0e36715c95988ceba5e0b1afc76343e9a5a4adb7))
+
 # [1.19.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.18.0...v1.19.0) (2026-10-28)
 
 
