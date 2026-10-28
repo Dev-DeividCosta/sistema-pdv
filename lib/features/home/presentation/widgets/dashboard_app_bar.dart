@@ -10,6 +10,8 @@ class DashboardAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 2,
+      title: const Text('Recanto dos Móveis'),
+      centerTitle: true,
     );
   }
 }

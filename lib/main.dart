@@ -49,7 +49,7 @@ class MeuPDVApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final appTheme = _buildAppTheme();
     return MaterialApp(
-      title: 'Meu PDV',
+      title: 'Recanto dos Móveis',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       // A mesma identidade visual é usada nos dois modos para evitar que
