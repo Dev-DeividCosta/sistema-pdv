@@ -28,6 +28,14 @@ class ItineraryPlanningPage extends ConsumerStatefulWidget {
 }
 
 class _ItineraryPlanningPageState extends ConsumerState<ItineraryPlanningPage> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   void _confirmResetVisits(List<ItineraryItemEntity> items) {
     final visitedCount = items.where((u) => u.isVisited).length;
@@ -164,6 +172,11 @@ class _ItineraryPlanningPageState extends ConsumerState<ItineraryPlanningPage> {
                   ))
               .where((item) => item.customer.isAtivo)
               .toList();
+          final filteredItems = visibleItems.where((item) {
+            final query = _searchQuery;
+            return item.customer.nome.toLowerCase().contains(query) ||
+                (item.customer.apelido ?? '').toLowerCase().contains(query);
+          }).toList();
           final visitedCount = visibleItems.where((u) => u.isVisited).length;
           final totalCount = visibleItems.length;
 
@@ -178,17 +191,53 @@ class _ItineraryPlanningPageState extends ConsumerState<ItineraryPlanningPage> {
 
           return Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (value) => setState(() => _searchQuery = value.trim().toLowerCase()),
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'Buscar por nome ou apelido...',
+                        hintStyle: TextStyle(color: Colors.grey[500]),
+                        prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                        filled: true,
+                        fillColor: const Color(0xFF262626),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               ItineraryProgressHeader(
                 visitedCount: visitedCount,
                 totalCount: totalCount,
                 onReset: isSaving ? null : () => _confirmResetVisits(visibleItems),
               ),
               Expanded(
-                child: ListView.builder(
+                child: filteredItems.isEmpty
+                    ? Center(
+                        child: Text(
+                          _searchQuery.isEmpty
+                              ? 'Nenhum cliente encontrado para esta cidade.'
+                              : 'Nenhum cliente encontrado para "$_searchQuery".',
+                          style: const TextStyle(color: Colors.grey),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    : ListView.builder(
                   padding: const EdgeInsets.only(top: 4.0, bottom: 110.0),
-                  itemCount: visibleItems.length,
+                  itemCount: filteredItems.length,
                   itemBuilder: (context, index) {
-                    final item = visibleItems[index];
+                    final item = filteredItems[index];
                     return Align(
                       alignment: Alignment.topCenter,
                       child: ConstrainedBox(
@@ -207,9 +256,9 @@ class _ItineraryPlanningPageState extends ConsumerState<ItineraryPlanningPage> {
                           },
                           onToggleVisited: isSaving ? () {} : () => _toggleVisited(item),
                           onConfirmNew: isSaving ? () {} : () => _confirmNew(item, index),
-                          onMoveUp: !isSaving && index > 0 ? () => _moveUp(index, visibleItems) : null,
-                          onMoveDown: !isSaving && index < visibleItems.length - 1
-                              ? () => _moveDown(index, visibleItems)
+                          onMoveUp: !isSaving && index > 0 ? () => _moveUp(index, filteredItems) : null,
+                          onMoveDown: !isSaving && index < filteredItems.length - 1
+                              ? () => _moveDown(index, filteredItems)
                               : null,
                         ),
                       ),

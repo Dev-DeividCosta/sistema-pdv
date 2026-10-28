@@ -1,38 +1,9 @@
 import 'package:flutter/material.dart';
 
-String _customerAvatarInitials(String name) {
-  final parts = name.trim().split(RegExp(r'\s+')).where((part) => part.isNotEmpty).toList();
-  if (parts.isEmpty) return '?';
-  if (parts.length == 1) return parts.first.substring(0, 1).toUpperCase();
-  return '${parts.first.substring(0, 1)}${parts.last.substring(0, 1)}'.toUpperCase();
-}
-
-class _AvatarInitials extends StatelessWidget {
-  final String name;
-
-  const _AvatarInitials({required this.name});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF323232),
-      alignment: Alignment.center,
-      child: Text(
-        _customerAvatarInitials(name),
-        style: const TextStyle(
-          color: Color(0xFF86C5A6),
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-}
-
 class AppCustomerCard extends StatelessWidget {
   final String name;
   final String cpf;
   final String phone;
-  final String? avatarUrl;
   
   final List<Widget>? topTags;
   
@@ -50,7 +21,6 @@ class AppCustomerCard extends StatelessWidget {
     required this.name,
     required this.cpf,
     required this.phone,
-    this.avatarUrl,
     this.topTags,
     this.leading,
     this.trailing,
@@ -65,10 +35,6 @@ class AppCustomerCard extends StatelessWidget {
     final cardBg = isVisited ? const Color(0xFF1A1A1A) : const Color(0xFF222222);
     final textOpacity = isVisited ? 0.4 : 1.0;
     final hasTags = topTags != null && topTags!.isNotEmpty;
-    final normalizedAvatarUrl = avatarUrl?.trim();
-    final resolvedAvatarUrl = normalizedAvatarUrl != null && normalizedAvatarUrl.isNotEmpty
-        ? normalizedAvatarUrl
-        : 'https://i.pravatar.cc/150?u=${Uri.encodeComponent(name)}';
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
@@ -103,24 +69,6 @@ class AppCustomerCard extends StatelessWidget {
                   leading!,
                   const SizedBox(width: 8),
                 ],
-
-                Opacity(
-                  opacity: textOpacity,
-                  child: ClipOval(
-                    child: SizedBox(
-                      width: 44,
-                      height: 44,
-                      child: Image.network(
-                        resolvedAvatarUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            _AvatarInitials(name: name),
-                      ),
-
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
 
                 Expanded(
                   child: Column(
