@@ -313,7 +313,10 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
       return;
     }
 
-    final employee = employees.where((item) => item.id == _employeeId).firstOrNull;
+    final seller = sale.employeeId == null
+        ? null
+        : employees.where((item) => item.id == sale.employeeId).firstOrNull;
+    final collector = employees.where((item) => item.id == saved.employeeId).firstOrNull;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -321,7 +324,8 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
           sale: sale,
           payment: saved,
           customer: customer,
-          employee: employee,
+          seller: seller,
+          collector: collector,
           company: company,
           totalPaidAfterPayment: remaining == amount ? sale.totalCentavos : sale.totalCentavos - remaining + amount,
         ),

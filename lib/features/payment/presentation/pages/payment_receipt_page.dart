@@ -17,7 +17,8 @@ class PaymentReceiptPage extends StatefulWidget {
   final SaleEntity sale;
   final PaymentEntity payment;
   final CustomerEntity? customer;
-  final EmployeeEntity? employee;
+  final EmployeeEntity? seller;
+  final EmployeeEntity? collector;
   final CompanyEntity? company;
   final int totalPaidAfterPayment;
 
@@ -27,7 +28,8 @@ class PaymentReceiptPage extends StatefulWidget {
     required this.payment,
     required this.totalPaidAfterPayment,
     this.customer,
-    this.employee,
+    this.seller,
+    this.collector,
     this.company,
   });
 
@@ -69,7 +71,8 @@ class _PaymentReceiptPageState extends State<PaymentReceiptPage> {
         sale: widget.sale,
         payment: widget.payment,
         customer: widget.customer,
-        employee: widget.employee,
+        seller: widget.seller,
+        collector: widget.collector,
         company: widget.company,
         totalPaidAfterPayment: widget.totalPaidAfterPayment,
       );

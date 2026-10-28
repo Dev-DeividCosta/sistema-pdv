@@ -7,16 +7,13 @@ import '../../../../core/widgets/forms/app_form_components.dart';
 import '../../../../core/widgets/forms/app_form_layout.dart';
 import '../../../../core/widgets/forms/app_form_select_field.dart';
 import '../../../city/presentation/pages/city_form_page.dart';
-import '../../../employee/presentation/pages/employee_form_page.dart';
 import '../../../sale/domain/entities/sale_status.dart';
 import '../../domain/entities/financial_city.dart';
-import '../../domain/entities/financial_employee.dart';
 import '../../domain/entities/financial_query.dart';
 import '../providers/financial_provider.dart';
 import 'financial_results_page.dart';
 
 const _allCitiesValue = '__all_cities__';
-const _allEmployeesValue = '__all_employees__';
 
 class FinancialPage extends ConsumerStatefulWidget {
   const FinancialPage({super.key});
@@ -29,8 +26,6 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
   late final TextEditingController _startDateController;
   late final TextEditingController _endDateController;
   String _selectedCityValue = _allCitiesValue;
-  String _selectedEmployeeValue = _allEmployeesValue;
-  late Set<SaleStatus> _selectedStatuses;
 
   @override
   void initState() {
@@ -40,7 +35,6 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
     _endDateController = TextEditingController(
       text: _formatDate(DateTime(today.year, today.month, today.day)),
     );
-    _selectedStatuses = SaleStatus.values.toSet();
   }
 
   @override
@@ -53,13 +47,10 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
   @override
   Widget build(BuildContext context) {
     final citiesAsync = ref.watch(financialCitiesProvider);
-    final employeesAsync = ref.watch(financialEmployeesProvider);
     final startDate = _parseDate(_startDateController.text);
     final endDate = _parseDate(_endDateController.text);
-    final canContinue = _selectedStatuses.isNotEmpty &&
-        startDate != null &&
-        endDate != null &&
-        !endDate.isBefore(startDate);
+    final canContinue =
+        startDate != null && endDate != null && !endDate.isBefore(startDate);
 
     return AppFormLayout(
       title: 'Controle Financeiro',
@@ -94,35 +85,13 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
                       ),
                       IconButton(
                         tooltip: 'Tentar novamente',
-                        onPressed: () => ref.invalidate(financialCitiesProvider),
+                        onPressed: () =>
+                            ref.invalidate(financialCitiesProvider),
                         icon: const Icon(Icons.refresh, color: Colors.white70),
                       ),
                     ],
                   ),
                   data: (cities) => _buildCitySelect(cities),
-                ),
-                const SizedBox(height: 12),
-                employeesAsync.when(
-                  loading: () => const InputDecorator(
-                    decoration: InputDecoration(labelText: 'vendedor'),
-                    child: LinearProgressIndicator(),
-                  ),
-                  error: (error, _) => Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          'Não foi possível carregar os vendedors.',
-                          style: TextStyle(color: Colors.white70),
-                        ),
-                      ),
-                      IconButton(
-                        tooltip: 'Tentar novamente',
-                        onPressed: () => ref.invalidate(financialEmployeesProvider),
-                        icon: const Icon(Icons.refresh, color: Colors.white70),
-                      ),
-                    ],
-                  ),
-                  data: (employees) => _buildEmployeeSelect(employees),
                 ),
               ],
             ),
@@ -205,43 +174,12 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          AppFormSection(
-            icon: Icons.sell_outlined,
-            title: 'Status das Vendas',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Selecione um ou mais status para incluir no relatório.',
-                  style: TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-                const SizedBox(height: 12),
-                _StatusSelectField(
-                  selectedStatuses: _selectedStatuses,
-                  onChanged: (statuses) =>
-                      setState(() => _selectedStatuses = statuses),
-                ),
-                if (_selectedStatuses.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Text(
-                      'Selecione ao menos um status.',
-                      style: TextStyle(color: Colors.redAccent, fontSize: 12),
-                    ),
-                  ),
-              ],
-            ),
-          ),
           const SizedBox(height: 20),
           SizedBox(
             height: 52,
             child: ElevatedButton.icon(
               onPressed: canContinue
-                  ? () => _openResults(
-                        citiesAsync.valueOrNull ?? const [],
-                        employeesAsync.valueOrNull ?? const [],
-                      )
+                  ? () => _openResults(citiesAsync.valueOrNull ?? const [])
                   : null,
               icon: const Icon(Icons.query_stats_outlined),
               label: const Text('VER RESULTADOS'),
@@ -290,49 +228,12 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
     );
   }
 
-  Widget _buildEmployeeSelect(List<FinancialEmployee> employees) {
-    final options = <String, String>{
-      _allEmployeesValue: 'Todos os vendedores',
-      for (final employee in employees) employee.id: employee.name,
-    };
-    final value = options.containsKey(_selectedEmployeeValue)
-        ? _selectedEmployeeValue
-        : _allEmployeesValue;
-
-    return AppFormSelectField<String>(
-      label: 'Vendedor',
-      value: value,
-      options: options,
-      sheetTitle: 'Selecione o vendedor',
-      primaryColor: AppMenuColors.employees,
-      action: AppFormSelectAction(
-        label: 'Cadastrar novo funcionário',
-        icon: Icons.person_add_alt_1_outlined,
-        backgroundColor: AppMenuColors.employees,
-        onPressed: _openEmployeeRegistration,
-      ),
-      onChanged: (selected) {
-        if (selected != null) {
-          setState(() => _selectedEmployeeValue = selected);
-        }
-      },
-    );
-  }
-
   Future<void> _openCityRegistration() async {
     await Navigator.of(context).push<void>(
       MaterialPageRoute<void>(builder: (_) => const CityFormPage()),
     );
     if (!mounted) return;
     ref.invalidate(financialCitiesProvider);
-  }
-
-  Future<void> _openEmployeeRegistration() async {
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(builder: (_) => const EmployeeFormPage()),
-    );
-    if (!mounted) return;
-    ref.invalidate(financialEmployeesProvider);
   }
 
   void _setRange(DateTime start, DateTime end) => setState(() {
@@ -352,10 +253,7 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
     return date;
   }
 
-  void _openResults(
-    List<FinancialCity> cities,
-    List<FinancialEmployee> employees,
-  ) {
+  void _openResults(List<FinancialCity> cities) {
     final startDate = _parseDate(_startDateController.text);
     final endDate = _parseDate(_endDateController.text);
     if (startDate == null || endDate == null || endDate.isBefore(startDate)) {
@@ -364,9 +262,7 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
     final cityId = _selectedCityValue == _allCitiesValue
         ? null
         : _selectedCityValue;
-    final employeeId = _selectedEmployeeValue == _allEmployeesValue
-        ? null
-        : _selectedEmployeeValue;
+
     var cityLabel = 'Todas as cidades';
     if (cityId != null) {
       for (final city in cities) {
@@ -376,213 +272,22 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
         }
       }
     }
-    var employeeLabel = 'Todos os vendedors';
-    if (employeeId != null) {
-      for (final employee in employees) {
-        if (employee.id == employeeId) {
-          employeeLabel = employee.name;
-          break;
-        }
-      }
-    }
 
     final query = FinancialQuery(
       cityId: cityId,
-      employeeId: employeeId,
+      employeeId: null,
       startDate: startDate,
       endDate: endDate,
-      statuses: _selectedStatuses.map((status) => status.value).toList(),
+      statuses: SaleStatus.values.map((status) => status.value).toList(),
     );
+
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => FinancialResultsPage(
           query: query,
           cityLabel: cityLabel,
-          employeeLabel: employeeLabel,
+          employeeLabel: 'Todos os vendedores',
         ),
-      ),
-    );
-  }
-}
-
-class _StatusSelectField extends StatelessWidget {
-  final Set<SaleStatus> selectedStatuses;
-  final ValueChanged<Set<SaleStatus>> onChanged;
-
-  const _StatusSelectField({
-    required this.selectedStatuses,
-    required this.onChanged,
-  });
-
-  String get _summary {
-    if (selectedStatuses.isEmpty) return 'Nenhum status selecionado';
-    if (selectedStatuses.length == SaleStatus.values.length) return 'Todas';
-    if (selectedStatuses.length == 1) return selectedStatuses.first.label;
-    return '${selectedStatuses.length} status selecionados';
-  }
-
-  @override
-  Widget build(BuildContext context) => Material(
-        color: const Color(0xFF424242),
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(8),
-          onTap: () => _showOptions(context),
-          child: InputDecorator(
-            decoration: const InputDecoration(
-              labelText: 'Status da Venda',
-              labelStyle: TextStyle(color: Colors.white70),
-              filled: true,
-              fillColor: Color(0xFF424242),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-                borderSide: BorderSide.none,
-              ),
-              suffixIcon: Icon(Icons.arrow_drop_down, color: Colors.white54),
-            ),
-            child: Text(
-              _summary,
-              style: const TextStyle(color: Colors.white),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-      );
-
-  Future<void> _showOptions(BuildContext context) async {
-    var draft = Set<SaleStatus>.from(selectedStatuses);
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: const Color(0xFF383838),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) => StatefulBuilder(
-        builder: (context, setSheetState) {
-          final selectAll = draft.length == SaleStatus.values.length;
-          return ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.72,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.white30,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Selecione o Status da Venda',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 5, bottom: 8),
-                    child: Text(
-                      'Escolha uma ou mais opções',
-                      style: TextStyle(color: Colors.white60, fontSize: 12),
-                    ),
-                  ),
-                  const Divider(color: Colors.white12),
-                  CheckboxListTile(
-                    value: selectAll,
-                    activeColor: AppMenuColors.company,
-                    checkColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 4),
-                    title: const Text(
-                      'Todas',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    subtitle: const Text(
-                      'Incluir todos os status de venda',
-                      style: TextStyle(color: Colors.white60, fontSize: 12),
-                    ),
-                    onChanged: (value) => setSheetState(() {
-                      draft = value == true
-                          ? SaleStatus.values.toSet()
-                          : <SaleStatus>{};
-                    }),
-                  ),
-                  const Divider(color: Colors.white12),
-                  Flexible(
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: SaleStatus.values.map((status) {
-                        return CheckboxListTile(
-                          value: draft.contains(status),
-                          activeColor: status.color,
-                          checkColor: Colors.white,
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 4),
-                          title: Text(
-                            status.label,
-                            style: TextStyle(
-                              color: status.color,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          onChanged: (value) => setSheetState(() {
-                            if (value == true) {
-                              draft.add(status);
-                            } else {
-                              draft.remove(status);
-                            }
-                          }),
-                        );
-                      }).toList(growable: false),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.pop(sheetContext),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 13),
-                          ),
-                          child: const Text('CANCELAR'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            onChanged(Set<SaleStatus>.from(draft));
-                            Navigator.pop(sheetContext);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppMenuColors.company,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 13),
-                          ),
-                          child: const Text('APLICAR'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }
@@ -654,7 +359,8 @@ class _DateSlashInputFormatter extends TextInputFormatter {
           : digitsBeforeCursor;
       if (removeAt >= 0 && removeAt < digits.length) {
         digits = digits.substring(0, removeAt) + digits.substring(removeAt + 1);
-        digitsBeforeCursor = newCursor < oldCursor ? removeAt : digitsBeforeCursor;
+        digitsBeforeCursor =
+            newCursor < oldCursor ? removeAt : digitsBeforeCursor;
       }
     }
 

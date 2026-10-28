@@ -318,7 +318,10 @@ class SaleDetailPage extends ConsumerWidget {
     CustomerEntity? customer,
     CompanyEntity? company,
   ) {
-    final employee = payment.employeeId == null
+    final seller = sale.employeeId == null
+        ? null
+        : employees.where((item) => item.id == sale.employeeId).firstOrNull;
+    final collector = payment.employeeId == null
         ? null
         : employees.where((item) => item.id == payment.employeeId).firstOrNull;
 
@@ -353,7 +356,8 @@ class SaleDetailPage extends ConsumerWidget {
                   context,
                   sale,
                   payment,
-                  employee,
+                  seller,
+                  collector,
                   customer,
                   company,
                   sale.totalCentavos - remainingAfter,
@@ -374,7 +378,7 @@ class SaleDetailPage extends ConsumerWidget {
               children: [
                 _paymentDetailText('Data', _formatDateTime(payment.paidAt)),
                 _paymentDetailText('Forma', payment.paymentMethodName ?? 'Não informada'),
-                _paymentDetailText('Cobrado por', employee?.nome ?? 'Não informado'),
+                _paymentDetailText('Cobrado por', collector?.nome ?? 'Não informado'),
                 const SizedBox(height: 6),
                 const Divider(color: Colors.white12, height: 1),
                 const SizedBox(height: 8),
@@ -450,7 +454,8 @@ class SaleDetailPage extends ConsumerWidget {
     BuildContext context,
     SaleEntity sale,
     PaymentEntity payment,
-    EmployeeEntity? employee,
+    EmployeeEntity? seller,
+    EmployeeEntity? collector,
     CustomerEntity? customer,
     CompanyEntity? company,
     int totalPaidAfterPayment,
@@ -459,7 +464,8 @@ class SaleDetailPage extends ConsumerWidget {
       final bytes = await ReceiptPdfBuilder.buildPaymentReceipt(
         sale: sale,
         payment: payment,
-        employee: employee,
+        seller: seller,
+        collector: collector,
         customer: customer,
         company: company,
         totalPaidAfterPayment: totalPaidAfterPayment,

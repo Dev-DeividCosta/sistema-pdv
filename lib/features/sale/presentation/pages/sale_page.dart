@@ -125,15 +125,18 @@ class _SalePageState extends ConsumerState<SalePage> {
         data: (products) => customersAsync.when(
           loading: () => _buildContent(products, const [], const [], null),
           error: (_, _) => _buildContent(products, const [], const [], null),
-          data: (customers) => employeesAsync.when(
-            loading: () => _buildContent(products, customers, const [], null),
-            error: (_, _) => _buildContent(products, customers, const [], null),
+          data: (customers) {
+            final activeCustomers = customers.where((customer) => customer.isAtivo).toList();
+            return employeesAsync.when(
+            loading: () => _buildContent(products, activeCustomers, const [], null),
+            error: (_, _) => _buildContent(products, activeCustomers, const [], null),
             data: (employees) => companyAsync.when(
-              loading: () => _buildContent(products, customers, employees, null),
-              error: (_, _) => _buildContent(products, customers, employees, null),
-              data: (company) => _buildContent(products, customers, employees, company),
+              loading: () => _buildContent(products, activeCustomers, employees, null),
+              error: (_, _) => _buildContent(products, activeCustomers, employees, null),
+              data: (company) => _buildContent(products, activeCustomers, employees, company),
             ),
-          ),
+          );
+          },
         ),
       ),
     );
@@ -226,7 +229,7 @@ class _SalePageState extends ConsumerState<SalePage> {
 
     return AppFormSelectField<String>(
       label: 'Cliente',
-      value: selectedCustomerId,
+      value: customerOptions.containsKey(selectedCustomerId) ? selectedCustomerId : null,
       options: customerOptions,
       sheetTitle: 'Selecione o Cliente',
       primaryColor: AppMenuColors.customer,
@@ -365,7 +368,10 @@ class _SalePageState extends ConsumerState<SalePage> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Informe a quantidade de parcelas.')));
       return;
     }
-    final draft = SaleDraft(id: const Uuid().v4(), customerId: cart.customerId, employeeId: cart.employeeId, installments: installments, discountCentavos: cart.discountCentavos, soldAt: DateTime.now().toUtc(), items: cart.items);
+    final customerId = customers.any((customer) => customer.id == cart.customerId)
+        ? cart.customerId
+        : null;
+    final draft = SaleDraft(id: const Uuid().v4(), customerId: customerId, employeeId: cart.employeeId, installments: installments, discountCentavos: cart.discountCentavos, soldAt: DateTime.now().toUtc(), items: cart.items);
     _pendingDraft = draft;
     _pendingCustomer = _findCustomer(customers, draft.customerId);
     _pendingEmployee = _findEmployee(employees, draft.employeeId);
