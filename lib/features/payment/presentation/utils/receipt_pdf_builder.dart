@@ -102,7 +102,8 @@ class ReceiptPdfBuilder {
     required int totalPaidAfterPayment,
     CompanyEntity? company,
     CustomerEntity? customer,
-    EmployeeEntity? employee,
+    EmployeeEntity? seller,
+    EmployeeEntity? collector,
   }) async {
     final pdf = pw.Document();
     final remaining = sale.totalCentavos - totalPaidAfterPayment;
@@ -129,9 +130,13 @@ class ReceiptPdfBuilder {
             if (customer?.cpf != null) pw.Text('CPF: ${customer!.cpf}'),
             if (customer?.celular != null) pw.Text('Celular: ${customer!.celular}'),
             pw.SizedBox(height: 12),
-            pw.Text('COBRANÇA', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-            pw.Text(employee?.nome ?? 'Não informado'),
-            if (employee?.cpf != null) pw.Text('CPF: ${employee!.cpf}'),
+            pw.Text('VENDEDOR', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Text(seller?.nome ?? 'Não informado'),
+            if (seller?.cpf != null) pw.Text('CPF: ${seller!.cpf}'),
+            pw.SizedBox(height: 12),
+            pw.Text('COBRADOR', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Text(collector?.nome ?? 'Não informado'),
+            if (collector?.cpf != null) pw.Text('CPF: ${collector!.cpf}'),
             pw.SizedBox(height: 16),
             pw.Text('ITENS DA VENDA', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
             pw.TableHelper.fromTextArray(

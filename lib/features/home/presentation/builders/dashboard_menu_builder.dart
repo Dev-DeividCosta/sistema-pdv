@@ -9,6 +9,7 @@ import '../../../sale/presentation/pages/sale_menu_page.dart';
 import '../../../employee/presentation/pages/employee_menu_page.dart';
 import '../../../payment_method/presentation/pages/payment_method_menu_page.dart';
 import '../../../company/presentation/pages/company_form_page.dart';
+import '../../../financial/presentation/pages/financial_page.dart';
 import '../../../../core/widgets/forms/form_mode.dart';
 
 abstract class DashboardBuilder {
@@ -89,6 +90,15 @@ class DashboardBuilderImpl implements DashboardBuilder {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const PaymentMethodMenuPage()),
+        ),
+      ),
+      AppMenuItem(
+        icon: Icons.account_balance_wallet,
+        title: 'Controle Financeiro',
+        color: const Color(0xFF16845B),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const FinancialPage()),
         ),
       ),
                   AppMenuItem(

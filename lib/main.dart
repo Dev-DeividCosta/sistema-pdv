@@ -47,19 +47,31 @@ class MeuPDVApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appTheme = _buildAppTheme();
     return MaterialApp(
       title: 'Meu PDV',
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        colorSchemeSeed: Colors.teal,
+      // A mesma identidade visual é usada nos dois modos para evitar que
+      // cada tela tenha uma aparência diferente conforme o sistema.
+      theme: appTheme,
+      darkTheme: appTheme,
+      home: DashboardScreen(
+        builder: DashboardBuilderImpl(),
       ),
-      darkTheme: ThemeData(
+    );
+  }
+
+  ThemeData _buildAppTheme() {
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: Colors.teal,
+      brightness: Brightness.dark,
+    );
+
+    return ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
-        colorSchemeSeed: Colors.teal,
+        colorScheme: colorScheme,
         scaffoldBackgroundColor: const Color(0xFF131922),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF18202C),
@@ -74,10 +86,6 @@ class MeuPDVApp extends StatelessWidget {
           backgroundColor: Color(0xFF008080),
           foregroundColor: Colors.white,
         ),
-      ),
-      home: DashboardScreen(
-        builder: DashboardBuilderImpl(),
-      ),
-    );
+      );
   }
 }
