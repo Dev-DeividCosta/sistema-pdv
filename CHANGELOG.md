@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.18.0...v1.19.0) (2026-10-28)
+
+
+### Features
+
+* **financeiro:** ajusta fluxo financeiro e comprovantes ([#46](https://github.com/Dev-DeividCosta/sistema-pdv/issues/46)) ([44b396a](https://github.com/Dev-DeividCosta/sistema-pdv/commit/44b396a1f7b33fae5ae7c3f66aaeea574f209cf5))
+
 # [1.18.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.17.0...v1.18.0) (2026-10-22)
 
 
