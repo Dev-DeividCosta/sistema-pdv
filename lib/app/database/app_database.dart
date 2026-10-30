@@ -18,7 +18,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   // --- ADICIONADO: Estratégia de Migração ---
   @override
@@ -45,6 +45,9 @@ class AppDatabase extends _$AppDatabase {
         if (from < 9) {
           await _createPaymentTables();
         }
+        if (from < 10) {
+          await ensureEmployeeVouchersTable();
+        }
       },
     );
   }
@@ -67,6 +70,10 @@ class AppDatabase extends _$AppDatabase {
     ''');
   }
 
+  Future<void> ensureEmployeeVouchersTable() async {
+    await ensureEmployeesTable();
+    await customStatement("""CREATE TABLE IF NOT EXISTS employee_vouchers (id TEXT NOT NULL PRIMARY KEY, employee_id TEXT NOT NULL, date TEXT NOT NULL, amount_centavos INTEGER NOT NULL, created_at TEXT NOT NULL)""");
+  }
   Future<void> ensureEmployeesTable() async {
     await customStatement('''
       CREATE TABLE IF NOT EXISTS employees (

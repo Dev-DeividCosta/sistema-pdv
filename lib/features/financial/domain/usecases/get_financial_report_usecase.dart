@@ -34,7 +34,7 @@ class GetFinancialReportUseCase {
         date: current?.date ?? date,
         statuses: statusCounts,
       );
-      total += sale.amountCentavos;
+      if (sale.saleStatus != 'voucher') total += sale.amountCentavos;
       if (countsTowardPaymentTotals) {
         paidTotal += sale.paidCentavos;
         pendingTotal += sale.pendingCentavos;
@@ -63,6 +63,7 @@ class GetFinancialReportUseCase {
 
     return FinancialReport(
       totalCentavos: total,
+      netTotalCentavos: total - sales.where((e) => e.saleStatus == 'voucher' || e.saleStatus == 'cancelled' || e.saleStatus == 'returned' || e.saleStatus == 'pending').fold<int>(0, (sum, e) => sum + e.amountCentavos.abs()),
       paidCentavos: paidTotal,
       pendingCentavos: pendingTotal,
       groups: List.unmodifiable(groups),

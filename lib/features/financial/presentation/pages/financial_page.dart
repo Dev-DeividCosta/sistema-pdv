@@ -9,11 +9,13 @@ import '../../../../core/widgets/forms/app_form_select_field.dart';
 import '../../../city/presentation/pages/city_form_page.dart';
 import '../../../sale/domain/entities/sale_status.dart';
 import '../../domain/entities/financial_city.dart';
+import '../../domain/entities/financial_employee.dart';
 import '../../domain/entities/financial_query.dart';
 import '../providers/financial_provider.dart';
 import 'financial_results_page.dart';
 
 const _allCitiesValue = '__all_cities__';
+const _allEmployeesValue = '__all_employees__';
 
 class FinancialPage extends ConsumerStatefulWidget {
   const FinancialPage({super.key});
@@ -26,6 +28,8 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
   late final TextEditingController _startDateController;
   late final TextEditingController _endDateController;
   String _selectedCityValue = _allCitiesValue;
+  String _selectedEmployeeValue = _allEmployeesValue;
+  final Set<String> _selectedStatuses = {...SaleStatus.values.map((s) => s.value), 'voucher'};
 
   @override
   void initState() {
@@ -47,6 +51,7 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
   @override
   Widget build(BuildContext context) {
     final citiesAsync = ref.watch(financialCitiesProvider);
+    final employeesAsync = ref.watch(financialEmployeesProvider);
     final startDate = _parseDate(_startDateController.text);
     final endDate = _parseDate(_endDateController.text);
     final canContinue =
@@ -70,6 +75,12 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
             title: 'Filtros do Relatório',
             child: Column(
               children: [
+                employeesAsync.when(
+                  loading: () => const InputDecorator(decoration: InputDecoration(labelText: 'Funcionário'), child: LinearProgressIndicator()),
+                  error: (error, _) => const Text('Não foi possível carregar funcionários.'),
+                  data: (employees) => _buildEmployeeSelect(employees),
+                ),
+                const SizedBox(height: 12),
                 citiesAsync.when(
                   loading: () => const InputDecorator(
                     decoration: InputDecoration(labelText: 'Cidade'),
@@ -174,6 +185,11 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
               ],
             ),
           ),
+          const SizedBox(height: 16),
+          AppFormSection(icon: Icons.filter_list, title: 'Tipos de lançamento', child: Wrap(spacing: 8, runSpacing: 4, children: [
+            ...SaleStatus.values.map((status) => FilterChip(label: Text(status.label), selected: _selectedStatuses.contains(status.value), onSelected: (yes) => setState(() { yes ? _selectedStatuses.add(status.value) : _selectedStatuses.remove(status.value); }))),
+            FilterChip(label: const Text('Vales'), selected: _selectedStatuses.contains('voucher'), onSelected: (yes) => setState(() { yes ? _selectedStatuses.add('voucher') : _selectedStatuses.remove('voucher'); })),
+          ])),
           const SizedBox(height: 20),
           SizedBox(
             height: 52,
@@ -200,6 +216,11 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
     );
   }
 
+  Widget _buildEmployeeSelect(List<FinancialEmployee> employees) {
+    final options = <String, String>{_allEmployeesValue: 'Todos os funcionários', for (final employee in employees) employee.id: employee.name};
+    final value = options.containsKey(_selectedEmployeeValue) ? _selectedEmployeeValue : _allEmployeesValue;
+    return AppFormSelectField<String>(label: 'Funcionário', value: value, options: options, sheetTitle: 'Selecione o Funcionário', primaryColor: AppMenuColors.company, onChanged: (selected) { if (selected != null) setState(() => _selectedEmployeeValue = selected); });
+  }
   Widget _buildCitySelect(List<FinancialCity> cities) {
     final options = <String, String>{
       _allCitiesValue: 'Todas as cidades',
@@ -275,10 +296,10 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
 
     final query = FinancialQuery(
       cityId: cityId,
-      employeeId: null,
+      employeeId: _selectedEmployeeValue == _allEmployeesValue ? null : _selectedEmployeeValue,
       startDate: startDate,
       endDate: endDate,
-      statuses: SaleStatus.values.map((status) => status.value).toList(),
+      statuses: _selectedStatuses.toList(),
     );
 
     Navigator.of(context).push(
@@ -286,7 +307,7 @@ class _FinancialPageState extends ConsumerState<FinancialPage> {
         builder: (_) => FinancialResultsPage(
           query: query,
           cityLabel: cityLabel,
-          employeeLabel: 'Todos os vendedores',
+          employeeLabel: _selectedEmployeeValue == _allEmployeesValue ? 'Todos os funcionários' : (ref.read(financialEmployeesProvider).valueOrNull?.firstWhere((e) => e.id == _selectedEmployeeValue, orElse: () => FinancialEmployee(id: '', name: 'Funcionário')).name ?? 'Funcionário'),
         ),
       ),
     );

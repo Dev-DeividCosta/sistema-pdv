@@ -55,6 +55,7 @@ class FinancialReport {
   final List<FinancialGroup> groups;
   final int saleCount;
   final Map<String, FinancialStatusTotal> statusTotals;
+  final int netTotalCentavos;
 
   const FinancialReport({
     required this.totalCentavos,
@@ -63,6 +64,7 @@ class FinancialReport {
     required this.groups,
     required this.saleCount,
     required this.statusTotals,
+    this.netTotalCentavos = 0,
   });
 }
 
