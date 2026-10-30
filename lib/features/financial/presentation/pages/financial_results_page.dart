@@ -32,11 +32,22 @@ class FinancialResultsPage extends ConsumerStatefulWidget {
 class _FinancialResultsPageState extends ConsumerState<FinancialResultsPage> {
   Timer? _refreshTimer;
 
+  void _safeInvalidateReport() {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final isCurrentRoute = ModalRoute.of(context)?.isCurrent ?? false;
+      if (isCurrentRoute) {
+        ref.invalidate(financialReportProvider(widget.query));
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _refreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      if (mounted) ref.invalidate(financialReportProvider(widget.query));
+      _safeInvalidateReport();
     });
   }
 
@@ -50,7 +61,10 @@ class _FinancialResultsPageState extends ConsumerState<FinancialResultsPage> {
   Widget build(BuildContext context) {
     final report = ref.watch(financialReportProvider(widget.query));
     final colors = Theme.of(context).colorScheme;
-    final selectedStatuses = widget.query.statuses.map(SaleStatus.fromValue).toList();
+    final selectedStatuses = widget.query.statuses
+        .where((status) => status != 'voucher')
+        .map(SaleStatus.fromValue)
+        .toList();
 
     return Scaffold(
       extendBody: true,
@@ -73,9 +87,20 @@ class _FinancialResultsPageState extends ConsumerState<FinancialResultsPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text('Relatório de vendas', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800, letterSpacing: -0.4)),
+                        Text(
+                          'Relatório financeiro',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.4,
+                              ),
+                        ),
                         const SizedBox(height: 6),
-                        Text('Confira o total e os lançamentos encontrados.', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                        Text(
+                          'Confira o total e os lançamentos encontrados.',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: colors.onSurfaceVariant,
+                              ),
+                        ),
                         const SizedBox(height: 16),
                         _AppliedFiltersCard(
                           cityLabel: widget.cityLabel,
@@ -86,7 +111,9 @@ class _FinancialResultsPageState extends ConsumerState<FinancialResultsPage> {
                         const SizedBox(height: 18),
                         report.when(
                           loading: () => const _LoadingResults(),
-                          error: (error, _) => _ErrorResults(onRetry: () => ref.invalidate(financialReportProvider(widget.query))),
+                          error: (error, _) => _ErrorResults(
+                            onRetry: () => ref.invalidate(financialReportProvider(widget.query)),
+                          ),
                           data: (data) {
                             final sales = data.groups
                                 .expand((group) => group.sales)
@@ -94,29 +121,44 @@ class _FinancialResultsPageState extends ConsumerState<FinancialResultsPage> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                              _TotalCard(
-                                totalCentavos: data.totalCentavos,
-                                saleCount: data.saleCount,
-                                statusTotals: data.statusTotals,
-                                sales: sales,
-                              ),
-                              const SizedBox(height: 25),
-                              Row(
-                                children: [
-                                  Expanded(child: Text('Vendas por dia', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800))),
-                                  Text('${data.groups.length} ${data.groups.length == 1 ? 'dia' : 'dias'}', style: Theme.of(context).textTheme.labelMedium?.copyWith(color: colors.onSurfaceVariant)),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              if (data.groups.isEmpty)
-                                const _EmptyResults()
-                              else
-                                ...data.groups.map((group) => Padding(
+                                _TotalCard(
+                                  totalCentavos: data.totalCentavos,
+                                  netTotalCentavos: data.netTotalCentavos,
+                                  saleCount: data.saleCount,
+                                  statusTotals: data.statusTotals,
+                                  sales: sales,
+                                ),
+                                const SizedBox(height: 25),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        'Lançamentos por dia',
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                      ),
+                                    ),
+                                    Text(
+                                      '${data.groups.length} ${data.groups.length == 1 ? 'dia' : 'dias'}',
+                                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                            color: colors.onSurfaceVariant,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                if (data.groups.isEmpty)
+                                  const _EmptyResults()
+                                else
+                                  ...data.groups.map(
+                                    (group) => Padding(
                                       padding: const EdgeInsets.only(bottom: 12),
                                       child: _DaySalesSection(group: group),
-                                    )),
-                              const SizedBox(height: 8),
-                              const _ResultsFootnote(),
+                                    ),
+                                  ),
+                                const SizedBox(height: 8),
+                                const _ResultsFootnote(),
                               ],
                             );
                           },
@@ -160,26 +202,56 @@ class _AppliedFiltersCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [Icon(Icons.tune_rounded, size: 17, color: colors.primary), const SizedBox(width: 7), Text('FILTROS APLICADOS', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: colors.primary, fontWeight: FontWeight.w800, letterSpacing: 0.8))]),
+          Row(
+            children: [
+              Icon(Icons.tune_rounded, size: 17, color: colors.primary),
+              const SizedBox(width: 7),
+              Text(
+                'FILTROS APLICADOS',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: colors.primary,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
+                    ),
+              ),
+            ],
+          ),
           const SizedBox(height: 11),
           _FilterLine(icon: Icons.location_on_outlined, text: cityLabel),
           const SizedBox(height: 7),
           _FilterLine(icon: Icons.person_outline, text: employeeLabel),
           const SizedBox(height: 7),
-          _FilterLine(icon: Icons.date_range_outlined, text: '${_formatDate(query.startDate)} – ${_formatDate(query.endDate)}'),
+          _FilterLine(
+            icon: Icons.date_range_outlined,
+            text: '${_formatDate(query.startDate)} – ${_formatDate(query.endDate)}',
+          ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 6,
             runSpacing: 2,
-            children: statuses.map((status) => Chip(
-              visualDensity: VisualDensity.compact,
-              label: Text(status.label),
-              labelStyle: TextStyle(fontSize: 11, color: status.color, fontWeight: FontWeight.w700),
-              avatar: Icon(Icons.circle, size: 8, color: status.color),
-              padding: EdgeInsets.zero,
-              backgroundColor: status.color.withValues(alpha: 0.10),
-              side: BorderSide(color: status.color.withValues(alpha: 0.25)),
-            )).toList(growable: false),
+            children: [
+              ...statuses.map(
+                (status) => Chip(
+                  visualDensity: VisualDensity.compact,
+                  label: Text(status.label),
+                  labelStyle: TextStyle(
+                    fontSize: 11,
+                    color: status.color,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  avatar: Icon(Icons.circle, size: 8, color: status.color),
+                  padding: EdgeInsets.zero,
+                  backgroundColor: status.color.withValues(alpha: 0.10),
+                  side: BorderSide(color: status.color.withValues(alpha: 0.25)),
+                ),
+              ),
+              if (query.statuses.contains('voucher'))
+                const Chip(
+                  visualDensity: VisualDensity.compact,
+                  label: Text('Vales'),
+                  avatar: Icon(Icons.circle, size: 8, color: Color(0xFFCE93D8)),
+                ),
+            ],
           ),
         ],
       ),
@@ -198,19 +270,26 @@ class _FilterLine extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: 8),
-          Expanded(child: Text(text, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600))),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ),
         ],
       );
 }
 
 class _TotalCard extends StatelessWidget {
   final int totalCentavos;
+  final int netTotalCentavos;
   final int saleCount;
   final Map<String, FinancialStatusTotal> statusTotals;
   final List<FinancialEntry> sales;
 
   const _TotalCard({
     required this.totalCentavos,
+    required this.netTotalCentavos,
     required this.saleCount,
     required this.statusTotals,
     required this.sales,
@@ -224,21 +303,31 @@ class _TotalCard extends StatelessWidget {
     var pendingAmount = 0;
     var hasPaymentStatus = false;
     var hasPendingSales = false;
-    final completedSales = sales.where((sale) =>
-        sale.saleStatus == SaleStatus.paid.value && sale.pendingCentavos == 0);
-    final partialSales = sales.where((sale) =>
-        sale.pendingCentavos > 0 &&
-        sale.paidCentavos > 0 &&
-        sale.saleStatus != SaleStatus.cancelled.value &&
-        sale.saleStatus != SaleStatus.returned.value);
-    final completedAmount = completedSales.fold<int>(
-        0, (sum, sale) => sum + sale.paidCentavos);
-    final partialAmount = partialSales.fold<int>(
-        0, (sum, sale) => sum + sale.paidCentavos);
+    final completedSales = sales.where(
+      (sale) => sale.saleStatus == SaleStatus.paid.value && sale.pendingCentavos == 0,
+    );
+    final partialSales = sales.where(
+      (sale) =>
+          sale.pendingCentavos > 0 &&
+          sale.paidCentavos > 0 &&
+          sale.saleStatus != SaleStatus.cancelled.value &&
+          sale.saleStatus != SaleStatus.returned.value,
+    );
+    final completedAmount = completedSales.fold<int>(0, (sum, sale) => sum + sale.paidCentavos);
+    final partialAmount = partialSales.fold<int>(0, (sum, sale) => sum + sale.paidCentavos);
 
     for (final entry in statusTotals.entries) {
       final status = SaleStatus.fromValue(entry.key);
       final count = entry.value.saleCount;
+      if (entry.key == 'voucher') {
+        statuses.add((
+          label: 'Vales / retiradas',
+          amount: entry.value.amountCentavos.abs(),
+          color: const Color(0xFFCE93D8),
+          description: '${entry.value.saleCount} ${entry.value.saleCount == 1 ? 'vale' : 'vales'}',
+        ));
+        continue;
+      }
       if (status == SaleStatus.paid || status == SaleStatus.pending) {
         hasPaymentStatus = true;
         paidAmount += entry.value.paidCentavos;
@@ -255,9 +344,11 @@ class _TotalCard extends StatelessWidget {
     }
 
     if (hasPaymentStatus) {
-      String paidDescription = '${completedSales.length} concluído${completedSales.length == 1 ? '' : 's'} (${_money(completedAmount)})';
+      String paidDescription =
+          '${completedSales.length} concluído${completedSales.length == 1 ? '' : 's'} (${_money(completedAmount)})';
       if (partialSales.isNotEmpty) {
-        paidDescription += ' · ${partialSales.length} ${partialSales.length == 1 ? 'parcial' : 'parciais'} (${_money(partialAmount)})';
+        paidDescription +=
+            ' · ${partialSales.length} ${partialSales.length == 1 ? 'parcial' : 'parciais'} (${_money(partialAmount)})';
       }
 
       statuses.add((
@@ -278,25 +369,96 @@ class _TotalCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 19),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF087F5B), Color(0xFF075E48)]),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF087F5B), Color(0xFF075E48)],
+        ),
         borderRadius: BorderRadius.circular(23),
-        boxShadow: [BoxShadow(color: const Color(0xFF087F5B).withValues(alpha: 0.20), blurRadius: 18, offset: const Offset(0, 8))],
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF087F5B).withValues(alpha: 0.20),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [const Icon(Icons.account_balance_wallet_outlined, color: Colors.white70, size: 18), const SizedBox(width: 8), Text('TOTAL DAS VENDAS', style: theme.textTheme.labelMedium?.copyWith(color: Colors.white70, fontWeight: FontWeight.w700, letterSpacing: 1))]),
+          Row(
+            children: [
+              const Icon(Icons.account_balance_wallet_outlined, color: Colors.white70, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'TOTAL BRUTO DE VENDAS',
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 10),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
-            child: Text(_money(totalCentavos), style: theme.textTheme.headlineMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w800, letterSpacing: -0.5)),
+            child: Text(
+              _money(totalCentavos),
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
+            ),
           ),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.13), borderRadius: BorderRadius.circular(30)),
-            child: Text('$saleCount ${saleCount == 1 ? 'venda encontrada' : 'vendas encontradas'}', style: theme.textTheme.labelSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.w700)),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.13),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Text(
+              '$saleCount ${saleCount == 1 ? 'venda encontrada' : 'vendas encontradas'}',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(13),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.13),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.trending_up, color: Colors.white70),
+                const SizedBox(width: 9),
+                const Expanded(
+                  child: Text(
+                    'SALDO LÍQUIDO ESTIMADO',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+                Text(
+                  _money(netTotalCentavos),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
           ),
           if (statuses.isNotEmpty) ...[
             const SizedBox(height: 17),
@@ -305,7 +467,15 @@ class _TotalCard extends StatelessWidget {
                 const Expanded(child: Divider(color: Colors.white24, height: 1)),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 9),
-                  child: Text('DETALHAMENTO POR STATUS', style: theme.textTheme.labelSmall?.copyWith(color: Colors.white70, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 0.7)),
+                  child: Text(
+                    'DETALHAMENTO POR STATUS',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: Colors.white70,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.7,
+                    ),
+                  ),
                 ),
                 const Expanded(child: Divider(color: Colors.white24, height: 1)),
               ],
@@ -322,8 +492,10 @@ class _TotalCard extends StatelessWidget {
                   children: statuses.asMap().entries.map((indexedEntry) {
                     final entry = indexedEntry.value;
                     final amount = entry.amount;
-                    final rawPercentage = totalCentavos == 0 ? 0.0 : (amount / totalCentavos) * 100;
-                    final remainingPercentage = (100.0 - percentageUsed).clamp(0.0, 100.0).toDouble();
+                    final rawPercentage =
+                        totalCentavos == 0 ? 0.0 : (amount / totalCentavos) * 100;
+                    final remainingPercentage =
+                        (100.0 - percentageUsed).clamp(0.0, 100.0).toDouble();
                     final percentage = indexedEntry.key == statuses.length - 1
                         ? remainingPercentage
                         : rawPercentage.clamp(0.0, remainingPercentage).toDouble();
@@ -342,27 +514,63 @@ class _TotalCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(children: [
-                              Container(width: 8, height: 8, decoration: BoxDecoration(color: entry.color, shape: BoxShape.circle)),
-                              const SizedBox(width: 6),
-                              Expanded(child: Text(entry.label, maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.labelMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700))),
-                              Text(
-                                '${shownPercentage.toStringAsFixed(2).replaceAll('.', ',')}%',
-                                style: theme.textTheme.labelSmall?.copyWith(color: Colors.white70, fontWeight: FontWeight.w700),
-                              ),
-                            ]),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: entry.color,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    entry.label,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: theme.textTheme.labelMedium?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '${shownPercentage.toStringAsFixed(2).replaceAll('.', ',')}%',
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 7),
                             FittedBox(
                               fit: BoxFit.scaleDown,
                               alignment: Alignment.centerLeft,
-                              child: Text(_money(amount), style: theme.textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w800)),
+                              child: Text(
+                                _money(amount),
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
                             ),
                             const SizedBox(height: 2),
-                            Text(entry.description, style: theme.textTheme.labelSmall?.copyWith(color: Colors.white70)),
+                            Text(
+                              entry.description,
+                              style: theme.textTheme.labelSmall?.copyWith(color: Colors.white70),
+                            ),
                             const SizedBox(height: 8),
                             ClipRRect(
                               borderRadius: BorderRadius.circular(4),
-                              child: LinearProgressIndicator(value: share, minHeight: 4, backgroundColor: Colors.white.withValues(alpha: 0.14), valueColor: AlwaysStoppedAnimation<Color>(entry.color)),
+                              child: LinearProgressIndicator(
+                                value: share,
+                                minHeight: 4,
+                                backgroundColor: Colors.white.withValues(alpha: 0.14),
+                                valueColor: AlwaysStoppedAnimation<Color>(entry.color),
+                              ),
                             ),
                           ],
                         ),
@@ -404,14 +612,12 @@ class _DaySalesSection extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.calendar_today_outlined,
-                      size: 16, color: theme.colorScheme.primary),
+                  Icon(Icons.calendar_today_outlined, size: 16, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       group.label,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w800),
+                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
                     ),
                   ),
                 ],
@@ -425,27 +631,33 @@ class _DaySalesSection extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     _DayMetricText(
-                        label: '${group.saleCount} ${group.saleCount == 1 ? 'venda' : 'vendas'}',
-                        color: theme.colorScheme.onSurfaceVariant),
+                      label: '${group.saleCount} ${group.saleCount == 1 ? 'venda' : 'vendas'}',
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                     _DayMetricText(
-                        label: 'Total: ${_money(group.amountCentavos)}',
-                        color: theme.colorScheme.onSurfaceVariant),
+                      label: 'Total: ${_money(group.amountCentavos)}',
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                     if (group.paidCentavos > 0)
                       _DayMetricText(
-                          label: 'Quitado: ${_money(group.paidCentavos)}',
-                          color: const Color(0xFF72D6A8)),
+                        label: 'Quitado: ${_money(group.paidCentavos)}',
+                        color: const Color(0xFF72D6A8),
+                      ),
                     if (group.pendingCentavos > 0)
                       _DayMetricText(
-                          label: 'Pendente: ${_money(group.pendingCentavos)}',
-                          color: const Color(0xFFFFC857)),
+                        label: 'Pendente: ${_money(group.pendingCentavos)}',
+                        color: const Color(0xFFFFC857),
+                      ),
                     if (returnedAmount > 0)
                       _DayMetricText(
-                          label: 'Devolvido: ${_money(returnedAmount)}',
-                          color: SaleStatus.returned.color),
+                        label: 'Devolvido: ${_money(returnedAmount)}',
+                        color: SaleStatus.returned.color,
+                      ),
                     if (cancelledAmount > 0)
                       _DayMetricText(
-                          label: 'Cancelado: ${_money(cancelledAmount)}',
-                          color: SaleStatus.cancelled.color),
+                        label: 'Cancelado: ${_money(cancelledAmount)}',
+                        color: SaleStatus.cancelled.color,
+                      ),
                   ],
                 ),
               ),
@@ -493,6 +705,25 @@ class _FinancialSaleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (sale.saleStatus == 'voucher') {
+      const color = Color(0xFFCE93D8);
+      return Card(
+        color: color.withValues(alpha: 0.10),
+        margin: const EdgeInsets.only(bottom: 12),
+        child: ListTile(
+          leading: const Icon(Icons.receipt_long_outlined, color: color),
+          title: Text(
+            'Vale de ${sale.customerName}',
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          subtitle: Text('Retirada • ${_formatDateTime(sale.soldAt)}'),
+          trailing: Text(
+            _money(sale.amountCentavos.abs()),
+            style: const TextStyle(fontWeight: FontWeight.w800, color: color),
+          ),
+        ),
+      );
+    }
     final status = SaleStatus.fromValue(sale.saleStatus);
     final itemNames = sale.itemsSummary.trim();
     final extraItems = sale.itemCount > 2 ? ' e mais ${sale.itemCount - 2}' : '';
@@ -531,8 +762,7 @@ class _FinancialSaleCard extends StatelessWidget {
                         CircleAvatar(
                           radius: 18,
                           backgroundColor: AppMenuColors.sale.withValues(alpha: 0.15),
-                          child: const Icon(Icons.person,
-                              color: AppMenuColors.sale, size: 20),
+                          child: const Icon(Icons.person, color: AppMenuColors.sale, size: 20),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -564,12 +794,13 @@ class _FinancialSaleCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: _saleInfoChip(Icons.calendar_today_outlined,
-                        _formatDateTime(sale.soldAt)),
+                    child: _saleInfoChip(
+                      Icons.calendar_today_outlined,
+                      _formatDateTime(sale.soldAt),
+                    ),
                   ),
                   const SizedBox(width: 12),
-                  _saleInfoChip(
-                      Icons.format_list_numbered, '${sale.installments}x'),
+                  _saleInfoChip(Icons.format_list_numbered, '${sale.installments}x'),
                 ],
               ),
               if (status != SaleStatus.returned && sale.pendingCentavos > 0) ...[
@@ -577,9 +808,21 @@ class _FinancialSaleCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Flexible(child: _PaymentAmountLine(label: 'Quitado', amountCentavos: sale.paidCentavos, color: const Color(0xFF72D6A8))),
+                    Flexible(
+                      child: _PaymentAmountLine(
+                        label: 'Quitado',
+                        amountCentavos: sale.paidCentavos,
+                        color: const Color(0xFF72D6A8),
+                      ),
+                    ),
                     const SizedBox(width: 10),
-                    Flexible(child: _PaymentAmountLine(label: 'Pendente', amountCentavos: sale.pendingCentavos, color: const Color(0xFFFFC857))),
+                    Flexible(
+                      child: _PaymentAmountLine(
+                        label: 'Pendente',
+                        amountCentavos: sale.pendingCentavos,
+                        color: const Color(0xFFFFC857),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -620,7 +863,11 @@ class _PaymentAmountLine extends StatelessWidget {
   final int amountCentavos;
   final Color color;
 
-  const _PaymentAmountLine({required this.label, required this.amountCentavos, required this.color});
+  const _PaymentAmountLine({
+    required this.label,
+    required this.amountCentavos,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) => Row(
@@ -628,7 +875,13 @@ class _PaymentAmountLine extends StatelessWidget {
         children: [
           Icon(Icons.schedule_outlined, size: 15, color: color),
           const SizedBox(width: 5),
-          Flexible(child: Text('$label: ${_money(amountCentavos)}', style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w800), overflow: TextOverflow.ellipsis)),
+          Flexible(
+            child: Text(
+              '$label: ${_money(amountCentavos)}',
+              style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w800),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       );
 }
@@ -649,13 +902,16 @@ Widget _saleInfoChip(IconData icon, String text) => Row(
     );
 
 String _formatDateTime(DateTime value) =>
-    '${_formatDate(value)} • ${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
+    '${_formatDate(value)} - ${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';
 
 class _LoadingResults extends StatelessWidget {
   const _LoadingResults();
 
   @override
-  Widget build(BuildContext context) => const Padding(padding: EdgeInsets.only(top: 64), child: Center(child: CircularProgressIndicator.adaptive()));
+  Widget build(BuildContext context) => const Padding(
+        padding: EdgeInsets.only(top: 64),
+        child: Center(child: CircularProgressIndicator.adaptive()),
+      );
 }
 
 class _EmptyResults extends StatelessWidget {
@@ -666,14 +922,29 @@ class _EmptyResults extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(color: colors.surfaceContainerLow, borderRadius: BorderRadius.circular(20), border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.5))),
-      child: Column(children: [
-        Icon(Icons.search_off_rounded, size: 34, color: colors.onSurfaceVariant),
-        const SizedBox(height: 10),
-        Text('Nenhuma venda encontrada', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
-        const SizedBox(height: 5),
-        Text('Tente ajustar a cidade, as datas ou os status selecionados.', textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant)),
-      ]),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        children: [
+          Icon(Icons.search_off_rounded, size: 34, color: colors.onSurfaceVariant),
+          const SizedBox(height: 10),
+          Text(
+            'Nenhuma venda encontrada',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            'Tente ajustar a cidade, as datas ou os status selecionados.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colors.onSurfaceVariant,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -684,11 +955,17 @@ class _ErrorResults extends StatelessWidget {
   const _ErrorResults({required this.onRetry});
 
   @override
-  Widget build(BuildContext context) => Column(children: [
-        const Text('Não foi possível carregar o resultado.'),
-        const SizedBox(height: 10),
-        OutlinedButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh), label: const Text('Tentar novamente')),
-      ]);
+  Widget build(BuildContext context) => Column(
+        children: [
+          const Text('Não foi possível carregar o resultado.'),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Tentar novamente'),
+          ),
+        ],
+      );
 }
 
 class _ResultsFootnote extends StatelessWidget {
@@ -698,11 +975,14 @@ class _ResultsFootnote extends StatelessWidget {
   Widget build(BuildContext context) => Text(
         'O total considera o valor registrado em cada venda dos status selecionados.',
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       );
 }
 
-String _formatDate(DateTime date) => '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+String _formatDate(DateTime date) =>
+    '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
 
 String _money(int centavos) {
   final parts = (centavos / 100).toStringAsFixed(2).split('.');

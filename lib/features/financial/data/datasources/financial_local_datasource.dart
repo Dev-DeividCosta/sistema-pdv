@@ -102,7 +102,7 @@ class FinancialLocalDataSource {
       ORDER BY s.sold_at DESC, s.created_at DESC
     ''', variables: variables).get();
 
-    return rows
+    final entries = rows
         .map((row) {
           final total = row.read<int>('total_centavos');
           final paid = row.read<int>('paid_centavos');
@@ -121,6 +121,27 @@ class FinancialLocalDataSource {
               itemCount: row.read<int>('items_count'),
             );
         })
-        .toList(growable: false);
+        .toList(growable: true);
+    if (query.statuses.contains('voucher')) {
+      await _db.ensureEmployeeVouchersTable();
+      final voucherRows = await _db.customSelect('''
+        SELECT v.id, v.date, v.amount_centavos, e.nome
+        FROM employee_vouchers v JOIN employees e ON e.id = v.employee_id
+        WHERE v.date >= ? AND v.date < ? AND e.is_deleted = 0
+          ${query.employeeId == null ? '' : 'AND v.employee_id = ?'}
+        ORDER BY v.date DESC
+      ''', variables: [
+        Variable<String>(start.toLocal().toIso8601String()),
+        Variable<String>(endExclusive.toLocal().toIso8601String()),
+        if (query.employeeId != null) Variable<String>(query.employeeId!),
+      ]).get();
+      entries.addAll(voucherRows.map((row) => FinancialEntryModel(
+        saleId: '', amountCentavos: -(row.read<int>('amount_centavos')),
+        soldAt: DateTime.parse(row.read<String>('date')).toLocal(),
+        city: 'Vale', saleStatus: 'voucher',
+        customerName: row.read<String>('nome'), itemsSummary: 'Retirada / vale',
+      )));
+    }
+    return entries;
   }
 }
