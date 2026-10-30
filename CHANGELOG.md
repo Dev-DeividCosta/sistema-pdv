@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.21.0...v1.22.0) (2026-10-30)
+
+
+### Features
+
+* **financeiro:** integrar vales de funcionários ([#52](https://github.com/Dev-DeividCosta/sistema-pdv/issues/52)) ([b443c11](https://github.com/Dev-DeividCosta/sistema-pdv/commit/b443c114f1ea8653b929e59a25cb0fe40185734a))
+
 # [1.21.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.20.0...v1.21.0) (2026-10-28)
 
 
