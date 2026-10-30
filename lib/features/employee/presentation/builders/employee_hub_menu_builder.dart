@@ -4,6 +4,7 @@ import '../../../../core/models/app_menu_item.dart';
 import '../../../../core/widgets/forms/form_mode.dart';
 import '../../domain/entities/employee.dart';
 import '../pages/employee_form_page.dart';
+import '../pages/employee_voucher_page.dart';
 
 abstract class EmployeeHubMenuBuilder {
   List<AppMenuItem> getMenuItems(BuildContext context, EmployeeEntity employee);
@@ -15,6 +16,10 @@ class EmployeeHubMenuBuilderImpl implements EmployeeHubMenuBuilder {
   @override
   List<AppMenuItem> getMenuItems(BuildContext context, EmployeeEntity employee) {
     return [
+      AppMenuItem(
+        title: 'Vales', icon: Icons.receipt_long_outlined, color: const Color(0xFFB71C1C),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EmployeeVoucherPage(employee: employee))),
+      ),
       AppMenuItem(
         title: 'Visualizar',
         icon: Icons.visibility,
