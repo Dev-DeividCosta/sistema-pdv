@@ -282,11 +282,26 @@ class _CustomerPurchaseHistoryPageState
               const SizedBox(height: 16),
               Row(
                 children: [
-                  _infoChip(Icons.calendar_today, _formatDateTime(sale.soldAt)),
+                  Expanded(
+                    child: _infoChip(
+                      Icons.calendar_today,
+                      _formatDateTime(sale.soldAt),
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  _infoChip(Icons.payment, sale.paymentMethod ?? 'N/A'),
+                  Expanded(
+                    child: _infoChip(
+                      Icons.payment,
+                      sale.paymentMethod ?? 'N/A',
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  _infoChip(Icons.format_list_numbered, '${sale.installments}x'),
+                  Expanded(
+                    child: _infoChip(
+                      Icons.format_list_numbered,
+                      '${sale.installments}x',
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -313,22 +328,19 @@ class _CustomerPurchaseHistoryPageState
   }
 
   Widget _infoChip(IconData icon, String text) {
-    return Expanded(
-      flex: text.length > 15 ? 1 : 0,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: Colors.grey[400]),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(
-              text,
-              style: TextStyle(color: Colors.grey[300], fontSize: 13),
-              overflow: TextOverflow.ellipsis,
-            ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: Colors.grey[400]),
+        const SizedBox(width: 6),
+        Flexible(
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.grey[300], fontSize: 13),
+            overflow: TextOverflow.ellipsis,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
