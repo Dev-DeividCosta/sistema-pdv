@@ -1,3 +1,10 @@
+## [1.22.1](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.22.0...v1.22.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* **historico:** evitar overflow nos chips de informações ([#54](https://github.com/Dev-DeividCosta/sistema-pdv/issues/54)) ([f1a678b](https://github.com/Dev-DeividCosta/sistema-pdv/commit/f1a678bfba32aae44f909562518c6a39e58bdade))
+
 # [1.22.0](https://github.com/Dev-DeividCosta/sistema-pdv/compare/v1.21.0...v1.22.0) (2026-10-30)
 
 
